@@ -9,10 +9,14 @@ file(GLOB_RECURSE PROJECT_SOURCES
         "${CMAKE_SOURCE_DIR}/src/*.h"
 )
 
-set(SFML_DIR "D:/C/Libs/SFML-2.5.1/lib/cmake/SFML")
+set(SFML_DIR "F:/Libs/SFML-2.5.1/lib/cmake/SFML")
 find_package(SFML 2.5.1 COMPONENTS graphics audio REQUIRED)
 
-add_executable(${PROJECT_NAME} main.cpp ${PROJECT_SOURCES})
+add_executable(${PROJECT_NAME} main.cpp ${PROJECT_SOURCES}
+        src/models/Ant.cpp
+        main.cpp
+        main.cpp
+        main.cpp)
 
 target_link_libraries(Anthill sfml-graphics sfml-audio)
 file(COPY resources DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

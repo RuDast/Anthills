@@ -16,16 +16,16 @@ public:
 private:
     unsigned age;
     unsigned health;
-    Role *role; // TODO после создания Role прикрутить его сюда
+    Role *role;
 
     bool need_to_move = false;
     float x, y;
     float target_x, target_y;
     float angle = 0;
-    const float speed = 50;
+    const float speed = 500;
 
     float last_update_time = 0.0f;
-    const float age_update_time_interval = 0.5f;
+    const float age_update_time_interval = 1.5f;
 public:
     void print() const;
     void setRole(Role *new_role);
