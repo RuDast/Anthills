@@ -19,7 +19,7 @@ private:
 
 public:
     bool add_ant(Ant& ant);
-    void update();
+    void update(float deltaTime);
     void print() const;
 };
 
