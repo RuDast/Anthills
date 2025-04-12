@@ -12,7 +12,7 @@ int main()
     background.setFillColor(sf::Color(128, 128, 128));
 
     sf::Texture ant_texture;
-    ant_texture.loadFromFile("resources\\icon.png");
+    ant_texture.loadFromFile("resources/icon.png");
 
     RenderManager render_manager;
     Ant ant(0, 0);
