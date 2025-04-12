@@ -42,7 +42,6 @@ void Ant::updateAge(const float deltaTime) {
 void Ant::terminate() {
     std::cout << "Ant is died." << std::endl;
     role = None;
-    // TODO уничтожить муравья.
 }
 
 void Ant::updateRole() {

@@ -15,3 +15,4 @@ find_package(SFML 2.5.1 COMPONENTS graphics audio REQUIRED)
 add_executable(${PROJECT_NAME} main.cpp ${PROJECT_SOURCES})
 
 target_link_libraries(Anthill sfml-graphics sfml-audio)
+file(COPY resources DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

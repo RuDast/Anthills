@@ -20,7 +20,7 @@ void AntRender::draw(sf::RenderWindow &window) {
     float angle = (atan2(target_y - y, target_x - x) * 180) / std::numbers::pi;
 
     sprite_.setRotation(angle - 90);
-    sprite_.setPosition(x, y); // TODO добавить поддержку координат в класс Ant
+    sprite_.setPosition(x, y);
     window.draw(sprite_);
 }
 
