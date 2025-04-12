@@ -23,7 +23,9 @@ int main()
 
     RenderManager render_manager;
     Ant ant(0, 800);
-    DrawableEntity *ant_render = new AntRender(ant, ant_texture);
+
+    AntRender *ant_render = new AntRender(ant, ant_texture);
+    ant.add_subscriber(ant_render);
     render_manager.addDrawable(ant_render);
 
     sf::Clock clock;
