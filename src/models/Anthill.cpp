@@ -13,10 +13,10 @@ bool Anthill::add_ant(Ant &ant) {
     return true;
 }
 
-void Anthill::update() {
+void Anthill::update(const float deltaTime) {
     for (unsigned i = 0; i < list_of_ants.size();) {
-        list_of_ants[i]->updateAge();
-        if (!list_of_ants[i]->getAlive()) {
+        list_of_ants[i]->updateAge(deltaTime);
+        if (!list_of_ants[i]->isAlive()) {
             list_of_ants.erase(list_of_ants.begin() + i);
         } else ++i;
     }

@@ -5,26 +5,44 @@
 enum {
     ANT_MAX_AGE = 13,
     NANNY_AGE = 2,
-    SOLIDER_AGE = 5
+    SOLIDER_AGE = 5,
+    COLLECTOR_AGE = 8,
+    CLEANER_AGE = 10
+
 };
 
 
 class Ant {
 public:
-    Ant();
+    Ant(float x, float y);
 
 private:
     unsigned age;
     unsigned health;
     Role *role; // TODO после создания Role прикрутить его сюда
+
+    bool need_to_move = false;
+    float x, y;
+    float target_x, target_y;
+    float angle = 0;
+    const float speed = 50;
+
+    float last_update_time = 0.0f;
+    const float age_update_time_interval = 0.5f;
 public:
     void print() const;
     void setRole(Role *new_role);
     Role* getRole() const;
-    void updateAge();
+    void updateAge(float deltaTime);
     void terminate();
     void updateRole();
-    bool getAlive() const;
+    bool isAlive() const;
+    void setTarget(float x, float y);
+    void update(float deltaTime);
+    float getX() const;
+    float getY() const;
+    float getTargetX() const;
+    float getTargetY() const;
 };
 
 
