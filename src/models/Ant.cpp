@@ -2,8 +2,12 @@
 
 #include <cmath>
 #include <iostream>
+
+#include "Roles/CleanerRole.h"
+#include "Roles/CollectorRole.h"
 #include "Roles/NannyRole.h"
 #include "Roles/NoneRole.h"
+#include "Roles/SoliderRole.h"
 
 #define EPSILON 0.001
 
@@ -50,9 +54,18 @@ void Ant::updateRole() {
             std::cout << "The ant became a nanny." << std::endl;
             setRole(Nanny);
         break;
-        // case SOLIDER_AGE:
-        //     break;
-            // TODO доделать
+        case SOLIDER_AGE:
+             std::cout << "The ant became a solider." << std::endl;
+             setRole(Solider);
+        break;
+        case COLLECTOR_AGE:
+            std::cout << "The ant became a collector." << std::endl;
+            setRole(Collector);
+        break;
+        case CLEANER_AGE:
+            std::cout << "The ant became a cleaner." << std::endl;
+            setRole(Cleaner);
+        break;
         default:
             break;
     }

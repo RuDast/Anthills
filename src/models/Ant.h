@@ -5,7 +5,10 @@
 enum {
     ANT_MAX_AGE = 13,
     NANNY_AGE = 2,
-    SOLIDER_AGE = 5
+    SOLIDER_AGE = 5,
+    COLLECTOR_AGE = 8,
+    CLEANER_AGE = 10
+
 };
 
 
