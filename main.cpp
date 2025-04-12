@@ -11,16 +11,23 @@ int main()
     sf::RectangleShape background(sf::Vector2f(1200, 800));
     background.setFillColor(sf::Color(128, 128, 128));
 
+    sf::RectangleShape storage(sf::Vector2f(200,150)); //склад с едой
+    storage.setFillColor(sf::Color(102,102,102));
+
+    sf::RectangleShape trash(sf::Vector2f(200,150)); //мусорка
+    trash.setFillColor(sf::Color(129,104,65));
+
     sf::Texture ant_texture;
-    ant_texture.loadFromFile("resources/icon.png");
+    ant_texture.loadFromFile("../resources/ants/common_ant.png"); // TODO нужно указывать путь относительно директории проекта, поэтому используем ..
+
 
     RenderManager render_manager;
-    Ant ant(0, 0);
+    Ant ant(0, 800);
     DrawableEntity *ant_render = new AntRender(ant, ant_texture);
     render_manager.addDrawable(ant_render);
 
     sf::Clock clock;
-    ant.setTarget(300, 300);
+    ant.setTarget(650, 100);
     ant.print();
 
     while (window.isOpen())
@@ -38,6 +45,13 @@ int main()
 
         window.clear();
         window.draw(background);
+
+        storage.setPosition(600,0);
+        window.draw(storage);
+
+        trash.setPosition(600, 650);
+        window.draw(trash);
+
         render_manager.drawAll(window);
         window.display();
     }
