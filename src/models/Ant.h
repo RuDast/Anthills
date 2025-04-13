@@ -27,10 +27,17 @@ private:
     float x, y;
     float target_x, target_y;
     float angle = 0;
+<<<<<<< HEAD
     const float speed = 500;
     std::vector<AntListener*> subscribers;
     float last_update_time = 0.0f;
     const float age_update_time_interval = 0.5f;
+=======
+    const float speed = 50;
+
+    float last_update_time = 0.0f;
+    const float age_update_time_interval = 1.0f;
+>>>>>>> origin/roles
 public:
     void print() const;
     void setRole(Role *new_role);
