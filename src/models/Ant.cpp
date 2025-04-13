@@ -9,9 +9,11 @@
 #include "Roles/NoneRole.h"
 #include "Roles/SoliderRole.h"
 
+#include "informers/AntListener.h"
+
 #define EPSILON 0.001
 
-Ant::Ant(const float x, const float y) : age(0), health(100), role(None), x(x), y(y), target_x(x), target_y(y) {
+Ant::Ant(const float x, const float y) : age(0), health(100), role(None), x(x), y(y), target_x(x), target_y(y), subscribers() {
 }
 
 void Ant::print() const {
@@ -23,7 +25,13 @@ void Ant::print() const {
 
 void Ant::setRole(Role *new_role) {
     if (role != new_role)
+    {
         role = new_role;
+        for (auto &sub : subscribers)
+        {
+            sub->on_change_role(*this);
+        }
+    }
 }
 
 Role *Ant::getRole() const {
@@ -83,9 +91,12 @@ void Ant::setTarget(const float x, const float y) {
 void Ant::update(const float deltaTime) {
     if (!isAlive())
         return ;
+
+    updateAge(deltaTime);
+
     const float delta_x = target_x - x;
     const float delta_y = target_y - y;
-    const float distance = sqrt(delta_x * delta_x + delta_y * delta_y);
+    const float distance = std::sqrt(delta_x * delta_x + delta_y * delta_y);
 
     if (distance < EPSILON)
         return;
@@ -99,8 +110,6 @@ void Ant::update(const float deltaTime) {
 
     x += vector_x * step;
     y += vector_y * step;
-
-    updateAge(deltaTime);
 }
 
 float Ant::getX() const {
@@ -117,5 +126,10 @@ float Ant::getTargetX() const {
 
 float Ant::getTargetY() const {
     return target_y;
+}
+
+void Ant::add_subscriber(AntListener* sub)
+{
+    subscribers.push_back(sub);
 }
 
