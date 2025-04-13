@@ -4,13 +4,13 @@
 
 #include "DrawableEntity.h"
 #include "../models/Ant.h"
+#include "../models/informers/AntListener.h"
 
 
-class AntRender : public DrawableEntity {
+class AntRender : public DrawableEntity, public AntListener {
 public:
-    AntRender(const Ant &ref, const sf::Texture &texture);
+    AntRender(const Ant &ref);
     ~AntRender() override;
-
 private:
     const Ant &ant_;
     sf::Sprite sprite_;
@@ -19,6 +19,7 @@ private:
 public:
     bool isAlive() override;
     void draw(sf::RenderWindow &window) override;
+    void on_change_role(const Ant &ant) override;
 };
 
 

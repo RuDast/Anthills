@@ -1,6 +1,9 @@
 #ifndef ANT_H
 #define ANT_H
+#include <vector>
+
 #include "Role.h"
+#include "informers/AntListener.h"
 
 enum {
     ANT_MAX_AGE = 13,
@@ -8,7 +11,6 @@ enum {
     SOLIDER_AGE = 5,
     COLLECTOR_AGE = 8,
     CLEANER_AGE = 10
-
 };
 
 
@@ -25,10 +27,12 @@ private:
     float x, y;
     float target_x, target_y;
     float angle = 0;
-    const float speed = 100;
 
+    const float speed = 50;
+    std::vector<AntListener*> subscribers;
     float last_update_time = 0.0f;
-    const float age_update_time_interval = 0.5f;
+    const float age_update_time_interval = 1.0f;
+
 public:
     void print() const;
     void setRole(Role *new_role);
@@ -43,6 +47,7 @@ public:
     float getY() const;
     float getTargetX() const;
     float getTargetY() const;
+    void add_subscriber(AntListener* sub);
 };
 
 

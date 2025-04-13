@@ -3,12 +3,10 @@
 #include "src/models/Ant.h"
 #include "src/views/AntRender.h"
 #include "src/views/RenderManager.h"
+#include "src/views/TextureManager.h"
 
 int main()
 {
-    sf::Texture ant_texture;
-    ant_texture.loadFromFile("../resources/ants/common_ant.png"); // TODO нужно указывать путь относительно директории проекта, поэтому используем ..
-
     sf::Texture trash_texture;
     trash_texture.loadFromFile(("../resources/textures/trash_texture.png"));
 
@@ -22,7 +20,7 @@ int main()
     background_texture.loadFromFile("../resources/textures/dirt.png");
 
 
-
+    srand(time(nullptr));
     sf::RenderWindow window(sf::VideoMode(1200, 800), "Anthill");
 
     sf::RectangleShape background(sf::Vector2f(1200, 800));
@@ -31,24 +29,18 @@ int main()
 
     sf::RectangleShape storage(sf::Vector2f(200, 150)); // склад с едой
     storage.setTexture(&storage_texture);
-    //storage_texture.setRepeated(true); // Включаем повторение текстуры
-    //storage.setTextureRect(sf::IntRect(0, 0, 200, 150));
-  // storage.setOutlineThickness(3.f);
-   //storage.setOutlineColor(sf::Color(170, 170, 170));
 
+
+    TextureManager::getInstance().loadTexture("common_ant", "../resources/ants/common_ant.png");
+    TextureManager::getInstance().loadTexture("solider_ant", "../resources/ants/coleader_ant.png");
+    TextureManager::getInstance().loadTexture("collector_ant", "../resources/ants/collector_ant.png");
+    TextureManager::getInstance().loadTexture("cleaner_ant", "../resources/ants/cleaner_ant.png");
 
     sf::RectangleShape trash(sf::Vector2f(200, 150)); // мусорка
     trash.setTexture(&trash_texture);
-    /*/trash.setFillColor(sf::Color(64, 0, 0));
-    trash.setOutlineThickness(5.f);
-    trash.setOutlineColor(sf::Color(106, 0, 0));/*/
-
 
     sf::RectangleShape spawn_of_ants(sf::Vector2f(400, 75)); //спавн
     spawn_of_ants.setTexture(&ant_spawn_texture);
-    /*/spawn_of_ants.setFillColor(sf::Color(0, 51, 25));
-    spawn_of_ants.setOutlineThickness(4.f);
-    spawn_of_ants.setOutlineColor(sf::Color(0, 120, 50));/*/
 
     sf::RectangleShape spawn_of_food(sf::Vector2f(200, 800));
     spawn_of_food.setFillColor(sf::Color(102,102,0));
@@ -57,6 +49,7 @@ int main()
 
     sf::VertexArray dashedLine(sf::Lines);
     sf::Color lineColor = sf::Color(172, 124, 61);
+  
     for (float y = 0; y < 800; y += 15 + 10) {
         dashedLine.append(sf::Vertex(sf::Vector2f(600, y), lineColor));
         dashedLine.append(sf::Vertex(sf::Vector2f(600, std::min(y + 15, 800.0f)), lineColor));
@@ -68,13 +61,32 @@ int main()
     spawn_of_food.setPosition(0,0);
 
     RenderManager render_manager;
-    Ant ant(0, 800);
-    DrawableEntity *ant_render = new AntRender(ant, ant_texture);
+    Ant ant(rand() % 1200, rand() % 800);
+    Ant ant2(rand() % 1200, rand() % 800);
+    Ant ant3(rand() % 1200, rand() % 800);
+    Ant ant4(rand() % 1200, rand() % 800);
+
+    AntRender *ant_render = new AntRender(ant);
+    ant.add_subscriber(ant_render);
     render_manager.addDrawable(ant_render);
 
+    AntRender *ant_render2 = new AntRender(ant2);
+    ant2.add_subscriber(ant_render2);
+    render_manager.addDrawable(ant_render2);
+
+    AntRender *ant_render3 = new AntRender(ant3);
+    ant3.add_subscriber(ant_render3);
+    render_manager.addDrawable(ant_render3);
+    AntRender *ant_render4 = new AntRender(ant4);
+    ant4.add_subscriber(ant_render4);
+    render_manager.addDrawable(ant_render4);
+
     sf::Clock clock;
-    ant.setTarget(650, 100);
-    ant.print();
+    ant.setTarget(rand() % 1200, rand() % 800);
+    ant2.setTarget(rand() % 1200, rand() % 800);
+    ant3.setTarget(rand() % 1200, rand() % 800);
+    ant4.setTarget(rand() % 1200, rand() % 800);
+
 
     while (window.isOpen())
     {
@@ -88,6 +100,9 @@ int main()
         }
 
         ant.update(deltaTime);
+        ant2.update(deltaTime);
+        ant3.update(deltaTime);
+        ant4.update(deltaTime);
 
         window.clear();
 
