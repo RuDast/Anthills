@@ -56,14 +56,16 @@ int main()
     spawn_of_food.setOutlineColor(sf::Color(102,102,0));
 
     sf::VertexArray dashedLine(sf::Lines);
-    sf::Color lineColor = sf::Color(150, 170, 170);
-    for (float y = 150; y < 650; y += 15 + 10) {
+    sf::Color lineColor = sf::Color(172, 124, 61);
+    for (float y = 0; y < 800; y += 15 + 10) {
         dashedLine.append(sf::Vertex(sf::Vector2f(600, y), lineColor));
         dashedLine.append(sf::Vertex(sf::Vector2f(600, std::min(y + 15, 800.0f)), lineColor));
     }
 
-
-
+    spawn_of_ants.setPosition(800,0);
+    storage.setPosition(600,0);
+    trash.setPosition(600, 650);
+    spawn_of_food.setPosition(0,0);
 
     RenderManager render_manager;
     Ant ant(0, 800);
@@ -88,20 +90,12 @@ int main()
         ant.update(deltaTime);
 
         window.clear();
+
         window.draw(background);
-
-        spawn_of_ants.setPosition(800,0);
         window.draw(spawn_of_ants);
-
-        storage.setPosition(600,0);
         window.draw(storage);
-
-        trash.setPosition(600, 650);
         window.draw(trash);
-
-        spawn_of_food.setPosition(0,0);
         window.draw(spawn_of_food);
-
         window.draw(dashedLine);
 
         render_manager.drawAll(window);
