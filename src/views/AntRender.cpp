@@ -2,17 +2,13 @@
 
 #include <cmath>
 #include <iostream>
-
-<<<<<<< HEAD
-AntRender::AntRender(const Ant &ref, const sf::Texture &texture) : ant_(ref)
-{
-    sprite_.setTexture(texture);
-=======
 #include "TextureManager.h"
+#include "../models/Roles/CleanerRole.h"
+#include "../models/Roles/CollectorRole.h"
+#include "../models/Roles/SoliderRole.h"
 
 AntRender::AntRender(const Ant &ref) : ant_(ref) {
     sprite_.setTexture(TextureManager::getInstance().getTexture("common_ant"));
->>>>>>> origin/roles
 }
 
 bool AntRender::isAlive()
@@ -36,7 +32,15 @@ void AntRender::draw(sf::RenderWindow &window)
 
 void AntRender::on_change_role(const Ant &ant)
 {
-    std::cout << "Sprite changed" << std::endl;
+    Role* ant_role = ant_.getRole();
+    if (ant_role == Solider)
+        sprite_.setTexture(TextureManager::getInstance().getTexture("solider_ant"));
+    else if (ant_role == Collector)
+        sprite_.setTexture(TextureManager::getInstance().getTexture("collector_ant"));
+    else if (ant_role == Cleaner)
+        sprite_.setTexture(TextureManager::getInstance().getTexture("cleaner_ant"));
+
+
 }
 
 AntRender::~AntRender()

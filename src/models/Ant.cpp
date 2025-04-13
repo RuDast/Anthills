@@ -91,9 +91,12 @@ void Ant::setTarget(const float x, const float y) {
 void Ant::update(const float deltaTime) {
     if (!isAlive())
         return ;
+
+    updateAge(deltaTime);
+
     const float delta_x = target_x - x;
     const float delta_y = target_y - y;
-    const float distance = sqrt(delta_x * delta_x + delta_y * delta_y);
+    const float distance = std::sqrt(delta_x * delta_x + delta_y * delta_y);
 
     if (distance < EPSILON)
         return;
@@ -107,8 +110,6 @@ void Ant::update(const float deltaTime) {
 
     x += vector_x * step;
     y += vector_y * step;
-
-    updateAge(deltaTime);
 }
 
 float Ant::getX() const {
