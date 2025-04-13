@@ -10,7 +10,7 @@ file(GLOB_RECURSE PROJECT_SOURCES
 )
 
 
-set(SFML_DIR "D:/C/Libs/SFML-2.5.1/lib/cmake/SFML")
+include(local_config.cmake OPTIONAL)
 find_package(SFML 2.5.1 COMPONENTS graphics audio REQUIRED)
 
 add_executable(${PROJECT_NAME} main.cpp ${PROJECT_SOURCES})
