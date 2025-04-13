@@ -7,23 +7,58 @@
 
 int main()
 {
+    sf::Texture trash_texture;
+    trash_texture.loadFromFile(("../resources/textures/trash_texture.png"));
+
+    sf::Texture storage_texture;
+    storage_texture.loadFromFile("../resources/textures/storage_texture.png");
+
+    sf::Texture ant_spawn_texture;
+    ant_spawn_texture.loadFromFile("../resources/textures/ant_spawn_textures.png");
+
+    sf::Texture background_texture;
+    background_texture.loadFromFile("../resources/textures/dirt.png");
+
+
     srand(time(nullptr));
     sf::RenderWindow window(sf::VideoMode(1200, 800), "Anthill");
 
     sf::RectangleShape background(sf::Vector2f(1200, 800));
-    background.setFillColor(sf::Color(128, 128, 128));
+    background.setTexture(&background_texture);
 
-    sf::RectangleShape storage(sf::Vector2f(200,150)); // склад с едой
-    storage.setFillColor(sf::Color(102,102,102));
 
-    sf::RectangleShape trash(sf::Vector2f(200,150)); // мусорка
-    trash.setFillColor(sf::Color(129,104,65));
+    sf::RectangleShape storage(sf::Vector2f(200, 150)); // склад с едой
+    storage.setTexture(&storage_texture);
+
 
     TextureManager::getInstance().loadTexture("common_ant", "../resources/ants/common_ant.png");
     TextureManager::getInstance().loadTexture("solider_ant", "../resources/ants/coleader_ant.png");
     TextureManager::getInstance().loadTexture("collector_ant", "../resources/ants/collector_ant.png");
     TextureManager::getInstance().loadTexture("cleaner_ant", "../resources/ants/cleaner_ant.png");
 
+    sf::RectangleShape trash(sf::Vector2f(200, 150)); // мусорка
+    trash.setTexture(&trash_texture);
+
+    sf::RectangleShape spawn_of_ants(sf::Vector2f(400, 75)); //спавн
+    spawn_of_ants.setTexture(&ant_spawn_texture);
+
+    sf::RectangleShape spawn_of_food(sf::Vector2f(200, 800));
+    spawn_of_food.setFillColor(sf::Color(102,102,0));
+    spawn_of_food.setOutlineThickness(4.f);
+    spawn_of_food.setOutlineColor(sf::Color(102,102,0));
+
+    sf::VertexArray dashedLine(sf::Lines);
+    sf::Color lineColor = sf::Color(172, 124, 61);
+  
+    for (float y = 0; y < 800; y += 15 + 10) {
+        dashedLine.append(sf::Vertex(sf::Vector2f(600, y), lineColor));
+        dashedLine.append(sf::Vertex(sf::Vector2f(600, std::min(y + 15, 800.0f)), lineColor));
+    }
+
+    spawn_of_ants.setPosition(800,0);
+    storage.setPosition(600,0);
+    trash.setPosition(600, 650);
+    spawn_of_food.setPosition(0,0);
 
     RenderManager render_manager;
     Ant ant(rand() % 1200, rand() % 800);
@@ -70,13 +105,13 @@ int main()
         ant4.update(deltaTime);
 
         window.clear();
+
         window.draw(background);
-
-        storage.setPosition(600,0);
+        window.draw(spawn_of_ants);
         window.draw(storage);
-
-        trash.setPosition(600, 650);
         window.draw(trash);
+        window.draw(spawn_of_food);
+        window.draw(dashedLine);
 
         render_manager.drawAll(window);
         window.display();

@@ -27,6 +27,7 @@ private:
     float x, y;
     float target_x, target_y;
     float angle = 0;
+
     const float speed = 50;
     std::vector<AntListener*> subscribers;
     float last_update_time = 0.0f;
