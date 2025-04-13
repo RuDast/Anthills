@@ -1,6 +1,6 @@
 #include "RenderManager.h"
 
-RenderManager::RenderManager() : entities() {
+RenderManager::RenderManager() {
 }
 
 void RenderManager::addDrawable(DrawableEntity *entity) {

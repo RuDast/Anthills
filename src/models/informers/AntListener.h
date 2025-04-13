@@ -4,12 +4,11 @@
 class Ant;
 
 
-class AntListener
-{
+class AntListener {
 public:
     virtual ~AntListener() = default;
-    virtual void on_change_role(const Ant& ant) = 0;
 
+    virtual void on_change_role(const Ant &ant) = 0;
 };
 
 

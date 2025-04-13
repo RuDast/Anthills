@@ -3,15 +3,16 @@
 #include "../Role.h"
 
 
-class CollectorRole: public Role {
+class CollectorRole : public Role {
     void work() override;
 
 public:
     ~CollectorRole() override;
+
     void print() override;
 };
 
-inline Role* Collector = new CollectorRole;
+inline Role *Collector = new CollectorRole;
 
 
 #endif //COLLECTORROLE_H
