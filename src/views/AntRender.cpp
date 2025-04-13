@@ -3,8 +3,10 @@
 #include <cmath>
 #include <iostream>
 
-AntRender::AntRender(const Ant &ref, const sf::Texture &texture) : ant_(ref) {
-    sprite_.setTexture(texture);
+#include "TextureManager.h"
+
+AntRender::AntRender(const Ant &ref) : ant_(ref) {
+    sprite_.setTexture(TextureManager::getInstance().getTexture("common_ant"));
 }
 
 bool AntRender::isAlive() {
@@ -17,7 +19,7 @@ void AntRender::draw(sf::RenderWindow &window) {
     const float target_x = ant_.getTargetX();
     const float target_y = ant_.getTargetY();
 
-    float angle = (atan2(target_y - y, target_x - x) * 180) / std::numbers::pi;
+    float angle = atan2(target_y - y, target_x - x) * 180 / std::numbers::pi;
 
     sprite_.setRotation(angle - 90);
     sprite_.setPosition(x, y);

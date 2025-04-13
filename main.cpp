@@ -3,6 +3,7 @@
 #include "src/models/Ant.h"
 #include "src/views/AntRender.h"
 #include "src/views/RenderManager.h"
+#include "src/views/TextureManager.h"
 
 int main()
 {
@@ -17,13 +18,15 @@ int main()
     sf::RectangleShape trash(sf::Vector2f(200,150)); //мусорка
     trash.setFillColor(sf::Color(129,104,65));
 
-    sf::Texture ant_texture;
-    ant_texture.loadFromFile("../resources/ants/common_ant.png"); // TODO нужно указывать путь относительно директории проекта, поэтому используем ..
+    TextureManager::getInstance().loadTexture("common_ant", "../resources/ants/common_ant.png");
+
+    // sf::Texture ant_texture;
+    // ant_texture.loadFromFile("../resources/ants/common_ant.png"); // TODO нужно указывать путь относительно директории проекта, поэтому используем ..
 
 
     RenderManager render_manager;
     Ant ant(0, 800);
-    DrawableEntity *ant_render = new AntRender(ant, ant_texture);
+    DrawableEntity *ant_render = new AntRender(ant);
     render_manager.addDrawable(ant_render);
 
     sf::Clock clock;

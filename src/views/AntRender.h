@@ -8,7 +8,7 @@
 
 class AntRender : public DrawableEntity {
 public:
-    AntRender(const Ant &ref, const sf::Texture &texture);
+    AntRender(const Ant &ref);
     ~AntRender() override;
 
 private:
