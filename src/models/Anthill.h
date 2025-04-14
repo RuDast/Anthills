@@ -18,7 +18,7 @@ private:
     unsigned short spawner_y = 100;
     bool free_spawners[Config::Anthill::spawners_count];
     Ant *ants_in_spawners[Config::Anthill::spawners_count];
-    int food_quantity = 5000;
+    int food_quantity = 120;
     unsigned size;
     std::vector<Ant *> list_of_ants;
     float last_spawn_time = 0;
