@@ -1,7 +1,9 @@
 #include <SFML/Graphics.hpp>
 
 #include "src/models/Ant.h"
+#include "src/models/Food.h"
 #include "src/views/AntRender.h"
+#include "src/views/FoodRender.h"
 #include "src/views/RenderManager.h"
 #include "src/views/TextureManager.h"
 
@@ -23,6 +25,8 @@ int main()
     TextureManager::getInstance().loadTexture("solider_ant", "../resources/ants/coleader_ant.png");
     TextureManager::getInstance().loadTexture("collector_ant", "../resources/ants/collector_ant.png");
     TextureManager::getInstance().loadTexture("cleaner_ant", "../resources/ants/cleaner_ant.png");
+    TextureManager::getInstance().loadTexture("img", "../resources/img.png");
+
 
 
     RenderManager render_manager;
@@ -30,6 +34,11 @@ int main()
     Ant ant2(rand() % 1200, rand() % 800);
     Ant ant3(rand() % 1200, rand() % 800);
     Ant ant4(rand() % 1200, rand() % 800);
+
+    Food food1;
+    food1.print();
+    FoodRender* foodrender = new FoodRender(food1);
+    render_manager.addDrawable(foodrender);
 
     AntRender *ant_render = new AntRender(ant);
     ant.add_subscriber(ant_render);
@@ -52,7 +61,7 @@ int main()
     ant3.setTarget(rand() % 1200, rand() % 800);
     ant4.setTarget(rand() % 1200, rand() % 800);
 
-
+    storage.setPosition(600,0);
     while (window.isOpen())
     {
         float deltaTime = clock.restart().asSeconds();
@@ -72,7 +81,7 @@ int main()
         window.clear();
         window.draw(background);
 
-        storage.setPosition(600,0);
+
         window.draw(storage);
 
         trash.setPosition(600, 650);
