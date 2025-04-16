@@ -14,5 +14,4 @@ public:
 };
 
 
-
 #endif //ROLE_H

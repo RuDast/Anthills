@@ -9,11 +9,12 @@ public:
     RenderManager();
 
 private:
-    std::vector<DrawableEntity*> entities;
+    std::vector<DrawableEntity *> entities;
 
 public:
     void addDrawable(DrawableEntity *entity);
-    void drawAll(sf::RenderWindow& window);
+
+    void drawAll(sf::RenderWindow &window);
 };
 
 

@@ -1,97 +1,98 @@
+#include <iostream>
 #include <SFML/Graphics.hpp>
 
+#include "src/constants.h"
+#include "src/Loader.h"
 #include "src/models/Ant.h"
-#include "src/models/Food.h"
+#include "src/models/Anthill.h"
 #include "src/views/AntRender.h"
 #include "src/views/FoodRender.h"
 #include "src/views/RenderManager.h"
 #include "src/views/TextureManager.h"
 
-int main()
-{
+int main() {
     srand(time(nullptr));
-    sf::RenderWindow window(sf::VideoMode(1200, 800), "Anthill");
+    sf::RenderWindow window(sf::VideoMode(Config::window_width, Config::window_height),
+                            "Anthill",
+                            sf::Style::Titlebar | sf::Style::Close);
 
-    sf::RectangleShape background(sf::Vector2f(1200, 800));
-    background.setFillColor(sf::Color(128, 128, 128));
-
-    sf::RectangleShape storage(sf::Vector2f(200,150)); // склад с едой
-    storage.setFillColor(sf::Color(102,102,102));
-
-    sf::RectangleShape trash(sf::Vector2f(200,150)); // мусорка
-    trash.setFillColor(sf::Color(129,104,65));
-
-    TextureManager::getInstance().loadTexture("common_ant", "../resources/ants/common_ant.png");
-    TextureManager::getInstance().loadTexture("solider_ant", "../resources/ants/coleader_ant.png");
-    TextureManager::getInstance().loadTexture("collector_ant", "../resources/ants/collector_ant.png");
-    TextureManager::getInstance().loadTexture("cleaner_ant", "../resources/ants/cleaner_ant.png");
-    TextureManager::getInstance().loadTexture("img", "../resources/img.png");
+    sf::Texture trash_texture, storage_texture, ant_spawn_texture, background_texture;
+    if (load_textures(trash_texture, storage_texture, ant_spawn_texture, background_texture) != 0)
+        return -1;
 
 
+    sf::RectangleShape background(sf::Vector2f(Config::window_width, Config::window_height));
+    background.setTexture(&background_texture);
+
+    sf::RectangleShape storage(sf::Vector2f(200, 150)); // склад с едой
+    storage.setTexture(&storage_texture);
+
+    sf::RectangleShape trash(sf::Vector2f(200, 150)); // мусорка
+    trash.setTexture(&trash_texture);
+
+    sf::RectangleShape spawn_of_ants(sf::Vector2f(400, 75)); // спавн
+    spawn_of_ants.setTexture(&ant_spawn_texture);
+
+    sf::RectangleShape spawn_of_food(sf::Vector2f(200, 800));
+    spawn_of_food.setFillColor(sf::Color(102, 102, 0));
+    spawn_of_food.setOutlineThickness(4.f);
+    spawn_of_food.setOutlineColor(sf::Color(102, 102, 0));
+
+    sf::VertexArray dashedLine(sf::Lines);
+    sf::Color lineColor = sf::Color(172, 124, 61);
+
+    for (float y = 0; y < 800; y += 15 + 10) {
+        dashedLine.append(sf::Vertex(sf::Vector2f(600, y), lineColor));
+        dashedLine.append(sf::Vertex(sf::Vector2f(600, std::min(y + 15, 800.0f)), lineColor));
+    }
+
+    spawn_of_ants.setPosition(800, 0);
+    storage.setPosition(600, 0);
+    trash.setPosition(600, 650);
+    spawn_of_food.setPosition(0, 0);
 
     RenderManager render_manager;
-    Ant ant(rand() % 1200, rand() % 800);
-    Ant ant2(rand() % 1200, rand() % 800);
-    Ant ant3(rand() % 1200, rand() % 800);
-    Ant ant4(rand() % 1200, rand() % 800);
 
-    Food food1;
-    food1.print();
-    FoodRender* foodrender = new FoodRender(food1);
-    render_manager.addDrawable(foodrender);
-
-    AntRender *ant_render = new AntRender(ant);
-    ant.add_subscriber(ant_render);
-    render_manager.addDrawable(ant_render);
-
-    AntRender *ant_render2 = new AntRender(ant2);
-    ant2.add_subscriber(ant_render2);
-    render_manager.addDrawable(ant_render2);
-
-    AntRender *ant_render3 = new AntRender(ant3);
-    ant3.add_subscriber(ant_render3);
-    render_manager.addDrawable(ant_render3);
-    AntRender *ant_render4 = new AntRender(ant4);
-    ant4.add_subscriber(ant_render4);
-    render_manager.addDrawable(ant_render4);
 
     sf::Clock clock;
-    ant.setTarget(rand() % 1200, rand() % 800);
-    ant2.setTarget(rand() % 1200, rand() % 800);
-    ant3.setTarget(rand() % 1200, rand() % 800);
-    ant4.setTarget(rand() % 1200, rand() % 800);
+    sf::Font KaaosPro;
+    KaaosPro.loadFromFile("../resources/fonts/KaaosPro.ttf");
+    sf::Text food_count;
+    food_count.setString("Food");
+    food_count.setFont(KaaosPro);
+    food_count.setCharacterSize(40);
+    Anthill anthill(render_manager, food_count);
+    Ant *ant = new Ant(100, 100);
+    AntRender *ant_render = new AntRender(*ant);
+    ant->add_subscriber(ant_render);
+    render_manager.addDrawable(ant_render);
+    anthill.update_food_count_text();
+    anthill.add_ant(ant);
 
-    storage.setPosition(600,0);
-    while (window.isOpen())
-    {
+    while (window.isOpen()) {
         float deltaTime = clock.restart().asSeconds();
 
         sf::Event event;
-        while (window.pollEvent(event))
-        {
+        while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed)
                 window.close();
         }
 
-        ant.update(deltaTime);
-        ant2.update(deltaTime);
-        ant3.update(deltaTime);
-        ant4.update(deltaTime);
-
         window.clear();
+
+        anthill.update(deltaTime);
+
         window.draw(background);
-
-
+        window.draw(spawn_of_ants);
         window.draw(storage);
-
-        trash.setPosition(600, 650);
         window.draw(trash);
+        window.draw(spawn_of_food);
+        window.draw(dashedLine);
+        window.draw(food_count);
 
         render_manager.drawAll(window);
         window.display();
     }
 
-
-    ant.print();
     return 0;
 }
