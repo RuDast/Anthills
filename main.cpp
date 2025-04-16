@@ -16,8 +16,8 @@ int main() {
                             "Anthill",
                             sf::Style::Titlebar | sf::Style::Close);
 
-    sf::Texture trash_texture, storage_texture, ant_spawn_texture, background_texture;
-    if (load_textures(trash_texture, storage_texture, ant_spawn_texture, background_texture) != 0)
+    sf::Texture trash_texture, storage_texture, ant_spawn_texture, background_texture, spawn_of_food_texture, flower_texture, bush_texture;
+    if (load_textures(trash_texture, storage_texture, ant_spawn_texture, background_texture, spawn_of_food_texture, flower_texture, bush_texture) != 0)
         return -1;
 
 
@@ -34,17 +34,27 @@ int main() {
     spawn_of_ants.setTexture(&ant_spawn_texture);
 
     sf::RectangleShape spawn_of_food(sf::Vector2f(200, 800));
-    spawn_of_food.setFillColor(sf::Color(102, 102, 0));
-    spawn_of_food.setOutlineThickness(4.f);
-    spawn_of_food.setOutlineColor(sf::Color(102, 102, 0));
+    spawn_of_food.setTexture(&spawn_of_food_texture);
 
-    sf::VertexArray dashedLine(sf::Lines);
-    sf::Color lineColor = sf::Color(172, 124, 61);
+    std::vector<sf::RectangleShape> flowers;
 
-    for (float y = 0; y < 800; y += 15 + 10) {
-        dashedLine.append(sf::Vertex(sf::Vector2f(600, y), lineColor));
-        dashedLine.append(sf::Vertex(sf::Vector2f(600, std::min(y + 15, 800.0f)), lineColor));
+    for (int i = 0; i < 30; ++i) {
+        sf::RectangleShape flower(sf::Vector2f(35, 35)); // Размер цветка
+        flower.setTexture(&flower_texture);
+        flower.setPosition(rand() % 1200, rand() % 800);
+        flowers.push_back(flower);
     }
+
+    std::vector<sf::RectangleShape> bushes;
+
+    for (int i = 0; i < 15; ++i) {
+        sf::RectangleShape bush(sf::Vector2f(50, 50));
+        bush.setTexture(&bush_texture);
+        bush.setPosition(rand() % 1200, rand() % 800);
+        flowers.push_back(bush);
+    }
+
+
 
     spawn_of_ants.setPosition(800, 0);
     storage.setPosition(600, 0);
@@ -62,10 +72,15 @@ int main() {
     food_count.setFont(KaaosPro);
     food_count.setCharacterSize(40);
     Anthill anthill(render_manager, food_count);
+
     Ant *ant = new Ant(100, 100);
     AntRender *ant_render = new AntRender(*ant);
+
+
     ant->add_subscriber(ant_render);
     render_manager.addDrawable(ant_render);
+
+
     anthill.update_food_count_text();
     anthill.add_ant(ant);
 
@@ -82,14 +97,21 @@ int main() {
 
         anthill.update(deltaTime);
 
+
         window.draw(background);
+        window.draw(spawn_of_food);
+        for (const auto& flower : flowers) {
+            window.draw(flower);
+        }
+
+        for (const auto& bush : bushes) {
+            window.draw(bush);
+        }
         window.draw(spawn_of_ants);
         window.draw(storage);
         window.draw(trash);
-        window.draw(spawn_of_food);
-        window.draw(dashedLine);
-        window.draw(food_count);
 
+        window.draw(food_count);
         render_manager.drawAll(window);
         window.display();
     }

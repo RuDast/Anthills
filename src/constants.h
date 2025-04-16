@@ -18,6 +18,12 @@ namespace Config {
         inline constexpr float age_update_time_interval = 5.0f;
         inline constexpr float speed = 50;
     }
+    namespace Enemy {
+        inline constexpr float enemy_speed = 100.0f;
+        inline constexpr float min_y = 0.0f;
+        inline constexpr float max_y= 800.0f;
+        inline constexpr float size = 20.0f;
+    }
 
     namespace Anthill {
         inline constexpr int max_size = 20;
@@ -34,5 +40,4 @@ namespace Config {
 
     }
 }
-
 #endif //CONSTANTS_H
