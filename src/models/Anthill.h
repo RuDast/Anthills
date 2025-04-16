@@ -40,6 +40,7 @@ public:
     void update_food_count_text() const;
 
     void spawn_food(float deltaTime);
+
 };
 
 

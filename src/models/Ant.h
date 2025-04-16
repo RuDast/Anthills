@@ -13,7 +13,7 @@ private:
     unsigned age;
     short health = 100;
     Role *role;
-
+    bool in_trashzone = false;
     bool need_to_move = true;
     float x, y;
     float target_x, target_y;
@@ -52,6 +52,8 @@ public:
     void lower_health(int damage);
 
     void increase_health(int health);
+
+    bool get_trash() const;
 };
 
 
