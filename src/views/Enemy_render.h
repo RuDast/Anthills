@@ -10,9 +10,9 @@ private:
     sf::CircleShape shape;
 
 public:
-    EnemyRender(const Enemy& enemyRef);
+    EnemyRender(const Enemy& enemy, float radius, const sf::Color& color);
     void update();
-    void draw(sf::RenderWindow& window) const;
+    void draw(sf::RenderTarget& target) const;
 };
 
 #endif // ENEMY_RENDER_H

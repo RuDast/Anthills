@@ -1,21 +1,20 @@
 #include "Enemy.h"
 
-Enemy::Enemy(float startX, float startY)
-    : x(startX), y(startY), speed(100.0f), health(100.0f) {
+Enemy::Enemy(float start_x, float start_y, float speed, float move_range)
+    : x(start_x), y(start_y), speed(speed), move_range(move_range),
+    min_y(start_y - move_range), max_y(start_y + move_range),
+    moving_down(true) {
 }
 
-void Enemy::update(float deltaTime) {
-    // Движение к муравейнику (влево)
-    x -= speed * deltaTime;
-}
+void Enemy::update(float delta_time) {
+    x -= speed * delta_time * 50.0f;
 
-void Enemy::takeDamage(float damage) {
-    health -= damage;
+    if (moving_down) {
+        y += speed * delta_time * 30.0f;
+        if (y >= max_y) moving_down = false;
+    }
+    else {
+        y -= speed * delta_time * 30.0f;
+        if (y <= min_y) moving_down = true;
+    }
 }
-
-bool Enemy::isAlive() const {
-    return health > 0;
-}
-
-float Enemy::getX() const { return x; }
-float Enemy::getY() const { return y; }
