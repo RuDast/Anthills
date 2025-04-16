@@ -3,7 +3,7 @@
 #include <vector>
 #include "Ant.h"
 #include <SFML/Graphics/Text.hpp>
-
+#include "Food.h"
 #include "../constants.h"
 #include "../views/RenderManager.h"
 
@@ -11,7 +11,8 @@
 class Anthill {
 public:
     Anthill(RenderManager &render_manager,
-            sf::Text &food_count_text);
+            sf::Text &food_count_text,
+            NotificationListener* notification_manager);
 
 private:
     unsigned int spawner_x[Config::Anthill::spawners_count] = {760, 800, 840, 880, 920, 960, 1000, 1040, 1080, 1120};
@@ -27,6 +28,9 @@ private:
     float last_age_update_time = 0;
     float last_food_spawn_time = 0;
     int current_count_food = 0;
+    NotificationListener* notification_manager;
+    std::vector<Food*> foods;
+    // died ants
 
 public:
     bool add_ant(Ant *ant);
@@ -41,6 +45,11 @@ public:
 
     void spawn_food(float deltaTime);
 
+    void go_to_food();
+
+    void clear_delivered_food();
+
+    void addDeliveredFood();
 };
 
 

@@ -29,7 +29,7 @@ void Ant::print() const {
 void Ant::setRole(Role *new_role) {
     if (role != new_role) {
         role = new_role;
-        for (const auto &sub: subscribers) {
+        for (const auto &sub: render_subscribers) {
             sub->on_change_role(*this);
         }
     }
@@ -98,9 +98,9 @@ void Ant::update(const float deltaTime) {
 
     updateAge(deltaTime);
 
-    if (need_to_move && getRole() != None) {
+    if (need_to_move && state == State::free && getRole() != None) {
         need_to_move = false;
-        setTarget(rand() % 1200, rand() % 800);
+        // setTarget(rand() % 1200, rand() % 800);
     }
 
     const float delta_x = target_x - x;
@@ -108,6 +108,21 @@ void Ant::update(const float deltaTime) {
     const float distance = std::sqrt(delta_x * delta_x + delta_y * delta_y);
 
     if (distance < Config::EPSILON) {
+        if (state == State::busy && carried_food != nullptr) {
+            state = State::going;
+            carried_food->setState(FoodState::going);
+            setTarget(Config::Anthill::sklad_x, Config::Anthill::sklad_y);
+            carried_food->terminate();
+        } else if (state == State::going && carried_food != nullptr) {
+            carried_food->setState(FoodState::on_sklad);
+            if (anthill != nullptr) {
+                anthill->addDeliveredFood();
+            }
+            carried_food = nullptr;
+            state = State::free;
+
+        }
+
         need_to_move = true;
         return;
     }
@@ -140,7 +155,7 @@ float Ant::getTargetY() const {
 }
 
 void Ant::add_subscriber(AntListener *sub) {
-    subscribers.push_back(sub);
+    render_subscribers.push_back(sub);
 }
 
 void Ant::lower_health(const int damage) {
@@ -155,6 +170,34 @@ void Ant::increase_health(const int health) {
     if (this->health > Config::Ant::max_age)
         this->health = Config::Ant::max_age;
 }
+
+void Ant::add_new_subscriber(NotificationListener *manager) {
+    subs.push_back(manager);
+}
+
+void Ant::help_with_food() {
+    for (auto& sub : subs) {
+        sub->onFoodPickupFailed(*this);
+    }
+}
+
+void Ant::set_state(State state) {
+    if (state != this->state)
+        this->state = state;
+}
+
+State Ant::get_state() const {
+    return state;
+}
+
+void Ant::set_food(Food *food) {
+    carried_food = food;
+}
+
+void Ant::set_anthill(Anthill *anthill) {
+    this->anthill = anthill;
+}
+
 
 bool Ant::get_trash() const
 {

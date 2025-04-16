@@ -20,7 +20,7 @@ void FoodRender::draw(sf::RenderWindow &window)
 
 bool FoodRender::isAlive()
 {
-    return true;
+    return food_.isAlive();
 }
 
 

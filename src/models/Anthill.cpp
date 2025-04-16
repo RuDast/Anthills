@@ -4,11 +4,14 @@
 #include "../constants.h"
 #include "../views/AntRender.h"
 #include "../views/FoodRender.h"
+#include "Roles/CollectorRole.h"
 #include "Roles/NoneRole.h"
 
 Anthill::Anthill(RenderManager &render_manager,
-                 sf::Text &food_count_text) : render_manager_(render_manager),
-                                              food_count(food_count_text) {
+                 sf::Text &food_count_text,
+                 NotificationListener *notification_manager) : render_manager_(render_manager),
+                                                              food_count(food_count_text),
+                                                              notification_manager(notification_manager) {
     size = Config::Anthill::default_size;
     for (int i = 0; i < Config::Anthill::spawners_count; i++) {
         ants_in_spawners[i] = nullptr;
@@ -51,6 +54,8 @@ void Anthill::update(const float deltaTime) {
     }
     spawn_ant(deltaTime);
     spawn_food(deltaTime);
+    go_to_food();
+    clear_delivered_food();
 }
 
 void Anthill::print() const {
@@ -83,6 +88,9 @@ void Anthill::spawn_ant(const float deltaTime) {
             AntRender *new_ant_render = new AntRender(*new_ant);
             new_ant->add_subscriber(new_ant_render);
             render_manager_.addDrawable(new_ant_render);
+            new_ant->set_anthill(this);
+
+            new_ant->add_new_subscriber(notification_manager);
         }
     }
 }
@@ -103,13 +111,45 @@ void Anthill::spawn_food(float deltaTime)
 
     if(current_count_food < Config::Food::max_count_of_food)
     {
-        const Food* new_food = new Food();
-        FoodRender *new_food_render = new FoodRender(*new_food);
+        const auto new_food = new Food();
+        DrawableEntity* new_food_render = new FoodRender(*new_food);
         render_manager_.addDrawable(new_food_render);
 
         current_count_food++;
+        foods.push_back(new_food);
     }
+}
 
+void Anthill::go_to_food() {
+    for (const auto food_ : foods) {
+        if (food_->getState() != FoodState::free)
+            continue;
+        for (auto& ant : list_of_ants) {
+            if (ant->get_state() == State::free && ant->getRole() == Collector) {
+                ant->set_state(State::busy);
+                food_->setState(FoodState::wait);
+                ant->setTarget(food_->getX(), food_->getY());
+                ant->set_food(food_);
+                return ;
+            }
+        }
+    }
+}
 
+void Anthill::clear_delivered_food() {
+    for (size_t i = 0; i < foods.size();) {
+        if (foods[i]->getState() == FoodState::on_sklad) {
+            delete foods[i];
+            foods.erase(foods.begin() + i);
+            current_count_food--;
+        } else {
+            ++i;
+        }
+    }
+}
+
+void Anthill::addDeliveredFood() {
+    food_quantity++;
+    update_food_count_text();
 }
 
