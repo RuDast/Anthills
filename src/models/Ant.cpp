@@ -114,9 +114,6 @@ void Ant::update(const float deltaTime) {
     const float distance = std::sqrt(delta_x * delta_x + delta_y * delta_y);
 
 
-
-
-
     if (distance < Config::EPSILON) {
         need_to_move = true;
         return;

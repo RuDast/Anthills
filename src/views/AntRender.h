@@ -21,7 +21,7 @@ public:
 
     void draw(sf::RenderWindow &window) override;
 
-    void on_change_role(const Ant &ant) override;
+    auto on_change_role(const Ant &ant) -> void override;
 };
 
 

@@ -5,7 +5,9 @@
 #include "src/Loader.h"
 #include "src/models/Ant.h"
 #include "src/models/Anthill.h"
+#include "src/models/Enemy.h"
 #include "src/views/AntRender.h"
+#include "src/views/enemy_render.h"
 #include "src/views/RenderManager.h"
 #include "src/views/TextureManager.h"
 
@@ -68,6 +70,10 @@ int main() {
     anthill.update_food_count_text();
     anthill.add_ant(ant);
 
+    Enemy enemy(200, 200);
+    EnemyRender enemy_render(enemy, 20, sf::Color(128, 128, 128));
+    render_manager.addDrawable(&enemy_render);
+
     while (window.isOpen()) {
         float deltaTime = clock.restart().asSeconds();
 
@@ -80,6 +86,7 @@ int main() {
         window.clear();
 
         anthill.update(deltaTime);
+        enemy.update(deltaTime);
 
         window.draw(background);
         window.draw(spawn_of_ants);
