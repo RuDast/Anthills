@@ -5,7 +5,7 @@
 
 FoodRender::FoodRender(const Food& food): food_(food)
 {
-    sprite_.setTexture(TextureManager::getInstance().getTexture("img"));
+    sprite_.setTexture(TextureManager::getInstance().getTexture("food"));
 }
 
 

@@ -1,6 +1,9 @@
 #include "Anthill.h"
+
+#include "Food.h"
 #include "../constants.h"
 #include "../views/AntRender.h"
+#include "../views/FoodRender.h"
 #include "Roles/NoneRole.h"
 
 Anthill::Anthill(RenderManager &render_manager,
@@ -47,6 +50,7 @@ void Anthill::update(const float deltaTime) {
         } else ++i;
     }
     spawn_ant(deltaTime);
+    spawn_food(deltaTime);
 }
 
 void Anthill::print() const {
@@ -85,4 +89,26 @@ void Anthill::spawn_ant(const float deltaTime) {
 
 void Anthill::update_food_count_text() const {
     food_count.setString("Food: " + std::to_string(food_quantity));
+}
+
+void Anthill::spawn_food(float deltaTime)
+{
+    last_food_spawn_time += deltaTime;
+
+    if (last_food_spawn_time < Config::Food::spawn_interval) {
+        return;
+    }
+
+    last_food_spawn_time = 0;
+
+    if(current_count_food < Config::Food::max_count_of_food)
+    {
+        const Food* new_food = new Food();
+        FoodRender *new_food_render = new FoodRender(*new_food);
+        render_manager_.addDrawable(new_food_render);
+
+        current_count_food++;
+    }
+
+
 }
