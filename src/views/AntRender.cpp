@@ -21,7 +21,7 @@ void AntRender::draw(sf::RenderWindow &window) {
     const float target_x = ant_.getTargetX();
     const float target_y = ant_.getTargetY();
 
-    const float angle = atan2(target_y - y, target_x - x) * 180 / std::numbers::pi;
+    const float angle = atan2(target_y - y, target_x - x) * 180 / 3.1415;
 
     sprite_.setRotation(angle - 90);
     sprite_.setPosition(x, y);
