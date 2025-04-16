@@ -3,6 +3,8 @@
 #include <vector>
 #include "Role.h"
 #include "informers/AntListener.h"
+#include "informers/NotificationListener.h"
+#include "informers/NotificationManager.h"
 
 
 class Ant {
@@ -11,14 +13,16 @@ public:
 
 private:
     unsigned age;
-    short health = 100;
+    short health;
     Role *role;
 
     bool need_to_move = true;
     float x, y;
     float target_x, target_y;
-    std::vector<AntListener *> subscribers;
+    std::vector<AntListener *> render_subscribers;
     float last_update_time = 0.0f;
+
+    std::vector<NotificationListener*> subs;
 
 public:
     void print() const;
@@ -52,6 +56,10 @@ public:
     void lower_health(int damage);
 
     void increase_health(int health);
+
+    void add_new_subscriber(NotificationListener* manager);
+
+    void help_with_food();
 };
 
 

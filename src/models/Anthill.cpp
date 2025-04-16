@@ -4,8 +4,10 @@
 #include "Roles/NoneRole.h"
 
 Anthill::Anthill(RenderManager &render_manager,
-                 sf::Text &food_count_text) : render_manager_(render_manager),
-                                              food_count(food_count_text) {
+                 sf::Text &food_count_text,
+                 NotificationListener *notification_manager) : render_manager_(render_manager),
+                                                              food_count(food_count_text),
+                                                              notification_manager(notification_manager) {
     size = Config::Anthill::default_size;
     for (int i = 0; i < Config::Anthill::spawners_count; i++) {
         ants_in_spawners[i] = nullptr;
@@ -79,6 +81,8 @@ void Anthill::spawn_ant(const float deltaTime) {
             AntRender *new_ant_render = new AntRender(*new_ant);
             new_ant->add_subscriber(new_ant_render);
             render_manager_.addDrawable(new_ant_render);
+
+            new_ant->add_new_subscriber(notification_manager);
         }
     }
 }

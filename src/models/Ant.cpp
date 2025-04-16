@@ -29,7 +29,7 @@ void Ant::print() const {
 void Ant::setRole(Role *new_role) {
     if (role != new_role) {
         role = new_role;
-        for (const auto &sub: subscribers) {
+        for (const auto &sub: render_subscribers) {
             sub->on_change_role(*this);
         }
     }
@@ -69,6 +69,7 @@ void Ant::updateRole() {
             break;
 
         case Config::Ant::collector_age:
+            help_with_food();
             setRole(Collector);
             break;
 
@@ -138,7 +139,7 @@ float Ant::getTargetY() const {
 }
 
 void Ant::add_subscriber(AntListener *sub) {
-    subscribers.push_back(sub);
+    render_subscribers.push_back(sub);
 }
 
 void Ant::lower_health(const int damage) {
@@ -152,4 +153,14 @@ void Ant::increase_health(const int health) {
     this->health += health;
     if (this->health > Config::Ant::max_age)
         this->health = Config::Ant::max_age;
+}
+
+void Ant::add_new_subscriber(NotificationListener *manager) {
+    subs.push_back(manager);
+}
+
+void Ant::help_with_food() {
+    for (auto& sub : subs) {
+        sub->onFoodPickupFailed(*this);
+    }
 }

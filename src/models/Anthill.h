@@ -11,7 +11,8 @@
 class Anthill {
 public:
     Anthill(RenderManager &render_manager,
-            sf::Text &food_count_text);
+            sf::Text &food_count_text,
+            NotificationListener* notification_manager);
 
 private:
     unsigned int spawner_x[Config::Anthill::spawners_count] = {760, 800, 840, 880, 920, 960, 1000, 1040, 1080, 1120};
@@ -25,6 +26,7 @@ private:
     RenderManager &render_manager_;
     sf::Text &food_count;
     float last_age_update_time = 0;
+    NotificationListener* notification_manager;
 
 public:
     bool add_ant(Ant *ant);

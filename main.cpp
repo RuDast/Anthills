@@ -60,13 +60,18 @@ int main() {
     food_count.setString("Food");
     food_count.setFont(KaaosPro);
     food_count.setCharacterSize(40);
-    Anthill anthill(render_manager, food_count);
+
+    NotificationListener *notification_manager = new NotificationManager();
+    Anthill anthill(render_manager, food_count, notification_manager);
+    notification_manager->connectAnthill(&anthill);
     Ant *ant = new Ant(100, 100);
     AntRender *ant_render = new AntRender(*ant);
     ant->add_subscriber(ant_render);
     render_manager.addDrawable(ant_render);
     anthill.update_food_count_text();
     anthill.add_ant(ant);
+
+
 
     while (window.isOpen()) {
         float deltaTime = clock.restart().asSeconds();
