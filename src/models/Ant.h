@@ -6,6 +6,12 @@
 #include "informers/NotificationListener.h"
 #include "informers/NotificationManager.h"
 
+enum class State {
+    free,
+    busy,
+    wait,
+};
+
 
 class Ant {
 public:
@@ -23,6 +29,8 @@ private:
     float last_update_time = 0.0f;
 
     std::vector<NotificationListener*> subs;
+
+    State state = State::free;
 
 public:
     void print() const;
@@ -60,6 +68,10 @@ public:
     void add_new_subscriber(NotificationListener* manager);
 
     void help_with_food();
+
+    void set_state(State state);
+
+    State get_state() const;
 };
 
 

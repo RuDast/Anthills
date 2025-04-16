@@ -3,7 +3,7 @@
 #include <vector>
 #include "Ant.h"
 #include <SFML/Graphics/Text.hpp>
-
+#include "Food.h"
 #include "../constants.h"
 #include "../views/RenderManager.h"
 
@@ -29,6 +29,8 @@ private:
     float last_food_spawn_time = 0;
     int current_count_food = 0;
     NotificationListener* notification_manager;
+    std::vector<Food*> foods;
+    // died ants
 
 public:
     bool add_ant(Ant *ant);
@@ -42,6 +44,8 @@ public:
     void update_food_count_text() const;
 
     void spawn_food(float deltaTime);
+
+    void go_to_food();
 };
 
 

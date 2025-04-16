@@ -55,7 +55,7 @@ void Ant::updateAge(const float deltaTime) {
 
 void Ant::terminate() {
     std::cout << "Ant is died." << std::endl;
-    role = None;
+    role = None; // Died
 }
 
 void Ant::updateRole() {
@@ -69,7 +69,6 @@ void Ant::updateRole() {
             break;
 
         case Config::Ant::collector_age:
-            help_with_food();
             setRole(Collector);
             break;
 
@@ -97,9 +96,9 @@ void Ant::update(const float deltaTime) {
 
     updateAge(deltaTime);
 
-    if (need_to_move && getRole() != None) {
+    if (need_to_move && state == State::free && getRole() != None) {
         need_to_move = false;
-        setTarget(rand() % 1200, rand() % 800);
+        // setTarget(rand() % 1200, rand() % 800);
     }
 
     const float delta_x = target_x - x;
@@ -107,6 +106,8 @@ void Ant::update(const float deltaTime) {
     const float distance = std::sqrt(delta_x * delta_x + delta_y * delta_y);
 
     if (distance < Config::EPSILON) {
+        if (state == State::busy)
+            state = State::wait;
         need_to_move = true;
         return;
     }
@@ -164,3 +165,13 @@ void Ant::help_with_food() {
         sub->onFoodPickupFailed(*this);
     }
 }
+
+void Ant::set_state(State state) {
+    if (state != this->state)
+        this->state = state;
+}
+
+State Ant::get_state() const {
+    return state;
+}
+

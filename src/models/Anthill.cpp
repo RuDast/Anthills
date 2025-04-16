@@ -4,6 +4,7 @@
 #include "../constants.h"
 #include "../views/AntRender.h"
 #include "../views/FoodRender.h"
+#include "Roles/CollectorRole.h"
 #include "Roles/NoneRole.h"
 
 Anthill::Anthill(RenderManager &render_manager,
@@ -53,6 +54,7 @@ void Anthill::update(const float deltaTime) {
     }
     spawn_ant(deltaTime);
     spawn_food(deltaTime);
+    go_to_food();
 }
 
 void Anthill::print() const {
@@ -107,12 +109,27 @@ void Anthill::spawn_food(float deltaTime)
 
     if(current_count_food < Config::Food::max_count_of_food)
     {
-        const Food* new_food = new Food();
-        FoodRender *new_food_render = new FoodRender(*new_food);
+        const auto new_food = new Food();
+        DrawableEntity* new_food_render = new FoodRender(*new_food);
         render_manager_.addDrawable(new_food_render);
 
         current_count_food++;
+        foods.push_back(new_food);
     }
+    // заспавнилась еда, нужно собрать ее
+}
 
-
+void Anthill::go_to_food() {
+    for (const auto food_ : foods) {
+        if (food_->getState() != FoodState::free)
+            continue;
+        for (auto& ant : list_of_ants) {
+            if (ant->get_state() == State::free && ant->getRole() == Collector) {
+                ant->set_state(State::busy);
+                food_->setState(FoodState::wait);
+                ant->setTarget(food_->getX(), food_->getY());
+                return ;
+            }
+        }
+    }
 }
