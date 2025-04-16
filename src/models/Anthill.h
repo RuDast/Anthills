@@ -26,6 +26,8 @@ private:
     RenderManager &render_manager_;
     sf::Text &food_count;
     float last_age_update_time = 0;
+    float last_food_spawn_time = 0;
+    int current_count_food = 0;
     NotificationListener* notification_manager;
 
 public:
@@ -38,6 +40,8 @@ public:
     void spawn_ant(float deltaTime);
 
     void update_food_count_text() const;
+
+    void spawn_food(float deltaTime);
 };
 
 

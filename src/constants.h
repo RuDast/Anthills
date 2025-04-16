@@ -26,6 +26,13 @@ namespace Config {
         inline constexpr int hunger_damage = 30;
         inline constexpr int spawners_count = 10;
     }
+
+    namespace Food
+    {
+        inline constexpr float spawn_interval = 5.0f;
+        inline constexpr int max_count_of_food = 10;
+
+    }
 }
 
 #endif //CONSTANTS_H
