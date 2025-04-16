@@ -1,152 +1,167 @@
+#include "Ant.h"
+#include <cmath>
 #include <iostream>
-#include <SFML/Graphics.hpp>
-#include <memory>
-#include <vector>
+#include "../constants.h"
+#include "Roles/CleanerRole.h"
+#include "Roles/CollectorRole.h"
+#include "Roles/NannyRole.h"
+#include "Roles/NoneRole.h"
+#include "Roles/SoliderRole.h"
+#include "informers/AntListener.h"
 
-#include "src/constants.h"
-#include "src/Loader.h"
-#include "src/models/Ant.h"
-#include "src/models/Anthill.h"
-#include "src/models/Enemy.h"
-#include "src/views/AntRender.h"
-#include "src/views/EnemyRender.h"
-#include "src/views/RenderManager.h"
-#include "src/views/TextureManager.h"
 
-int main() {
-    srand(time(nullptr));
-    sf::RenderWindow window(sf::VideoMode(Config::window_width, Config::window_height),
-        "Anthill",
-        sf::Style::Titlebar | sf::Style::Close);
+Ant::Ant(const float x, const float y) : age(Config::Ant::start_age),
+health(Config::Ant::max_health),
+role(None),
+x(x),
+y(y),
+target_x(x),
+target_y(y) {
+}
 
-    // Загрузка текстур
-    sf::Texture trash_texture, storage_texture, ant_spawn_texture, background_texture;
-    if (load_textures(trash_texture, storage_texture, ant_spawn_texture, background_texture) != 0)
-        return -1;
+void Ant::print() const {
+    std::cout << "Age: " << age << std::endl;
+    std::cout << "Health: " << health << std::endl;
+    std::cout << "Role: ";
+    role->print();
+}
 
-    // Создание игровых объектов
-    sf::RectangleShape background(sf::Vector2f(Config::window_width, Config::window_height));
-    background.setTexture(&background_texture);
+void Ant::setRole(Role* new_role) {
+    if (role != new_role) {
+        role = new_role;
+        for (const auto& sub : subscribers) {
+            sub->on_change_role(*this);
+        }
+    }
+}
 
-    sf::RectangleShape storage(sf::Vector2f(200, 150));
-    storage.setTexture(&storage_texture);
+Role* Ant::getRole() const {
+    return role;
+}
 
-    sf::RectangleShape trash(sf::Vector2f(200, 150));
-    trash.setTexture(&trash_texture);
+void Ant::updateAge(const float deltaTime) {
+    last_update_time += deltaTime;
 
-    sf::RectangleShape spawn_of_ants(sf::Vector2f(400, 75));
-    spawn_of_ants.setTexture(&ant_spawn_texture);
-
-    sf::RectangleShape spawn_of_food(sf::Vector2f(200, 800));
-    spawn_of_food.setFillColor(sf::Color(102, 102, 0));
-    spawn_of_food.setOutlineThickness(4.f);
-    spawn_of_food.setOutlineColor(sf::Color(102, 102, 0));
-
-    // Пунктирная линия
-    sf::VertexArray dashedLine(sf::Lines);
-    sf::Color lineColor = sf::Color(172, 124, 61);
-    for (float y = 0; y < 800; y += 15 + 10) {
-        dashedLine.append(sf::Vertex(sf::Vector2f(600, y), lineColor));
-        dashedLine.append(sf::Vertex(sf::Vector2f(600, std::min(y + 15, 800.0f)), lineColor));
+    if (last_update_time >= Config::Ant::age_update_time_interval) {
+        ++age;
+        last_update_time = 0;
+        updateRole();
     }
 
-    // Позиционирование объектов
-    spawn_of_ants.setPosition(800, 0);
-    storage.setPosition(600, 0);
-    trash.setPosition(600, 650);
-    spawn_of_food.setPosition(0, 0);
+    if (age >= Config::Ant::max_age) {
+        terminate();
+    }
+}
 
-    // Менеджер рендеринга
-    RenderManager render_manager;
+void Ant::terminate() {
+    std::cout << "Ant is died." << std::endl;
+    role = None;
+}
 
-    // Шрифт и текст
-    sf::Clock clock;
-    sf::Font KaaosPro;
-    KaaosPro.loadFromFile("../resources/fonts/KaaosPro.ttf");
-    sf::Text food_count;
-    food_count.setString("Food");
-    food_count.setFont(KaaosPro);
-    food_count.setCharacterSize(40);
+void Ant::updateRole() {
+    switch (age) {
+    case Config::Ant::nanny_age:
+        setRole(Nanny);
+        break;
 
-    // Муравейник и первый муравей
-    Anthill anthill(render_manager, food_count);
-    Ant* ant = new Ant(100, 100);
-    AntRender* ant_render = new AntRender(*ant);
-    ant->add_subscriber(ant_render);
-    render_manager.addDrawable(ant_render);
-    anthill.update_food_count_text();
-    anthill.add_ant(ant);
+    case Config::Ant::soldier_age:
+        setRole(Soldier);
+        break;
 
-    // Система врагов
-    std::vector<std::unique_ptr<Enemy>> enemies;
-    std::vector<std::unique_ptr<EnemyRender>> enemy_renders;
-    sf::Clock enemy_spawn_timer;
+    case Config::Ant::collector_age:
+        setRole(Collector);
+        break;
 
-    // Главный игровой цикл
-    while (window.isOpen()) {
-        float deltaTime = clock.restart().asSeconds();
+    case Config::Ant::cleaner_age:
+        setRole(Cleaner);
+        break;
 
-        // Обработка событий
-        sf::Event event;
-        while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed)
-                window.close();
-        }
 
-        // Спавн врагов
-        if (enemy_spawn_timer.getElapsedTime().asSeconds() > 5.0f) {
-            auto enemy = std::make_unique<Enemy>(
-                Config::window_width + 50,
-                rand() % (Config::window_height - 100) + 50,
-                1.5f,   // speed
-                100.0f  // move range
-            );
 
-            auto render = std::make_unique<EnemyRender>(*enemy, 25.0f, sf::Color::Red);
 
-            render_manager.addDrawable(render.get());
-            enemies.push_back(std::move(enemy));
-            enemy_renders.push_back(std::move(render));
 
-            enemy_spawn_timer.restart();
-        }
 
-        // Обновление игры
-        anthill.update(deltaTime);
+    default:
+        break;
+    }
+}
 
-        // Обновление врагов
-        for (size_t i = 0; i < enemies.size(); ) {
-            enemies[i]->update(deltaTime);
 
-            if (enemies[i]->getX() < -50) {
-                render_manager.removeDrawable(enemy_renders[i].get());
-                enemies.erase(enemies.begin() + i);
-                enemy_renders.erase(enemy_renders.begin() + i);
-            }
-            else {
-                enemy_renders[i]->update();
-                i++;
-            }
-        }
 
-        // Отрисовка
-        window.clear();
 
-        window.draw(background);
-        window.draw(spawn_of_ants);
-        window.draw(storage);
-        window.draw(trash);
-        window.draw(spawn_of_food);
-        window.draw(dashedLine);
-        window.draw(food_count);
 
-        render_manager.drawAll(window);
-        window.display();
+bool Ant::isAlive() const {
+    return age < Config::Ant::max_age && health > Config::Ant::start_age;
+}
+
+void Ant::setTarget(const float x, const float y) {
+    target_x = x;
+    target_y = y;
+}
+
+void Ant::update(const float deltaTime) {
+    if (!isAlive())
+        return;
+
+    updateAge(deltaTime);
+    if (need_to_move && getRole() != None) {
+        need_to_move = false;
+        setTarget(rand() % 1200, rand() % 800);
     }
 
-    // Очистка памяти
-    delete ant;
-    delete ant_render;
+    const float delta_x = target_x - x;
+    const float delta_y = target_y - y;
+    const float distance = std::sqrt(delta_x * delta_x + delta_y * delta_y);
 
-    return 0;
+
+
+
+
+    if (distance < Config::EPSILON) {
+        need_to_move = true;
+        return;
+    }
+
+    const float vector_x = delta_x / distance;
+    const float vector_y = delta_y / distance;
+
+    float step = Config::Ant::speed * deltaTime;
+    if (step > distance)
+        step = distance;
+
+    x += vector_x * step;
+    y += vector_y * step;
+}
+
+float Ant::getX() const {
+    return x;
+}
+
+float Ant::getY() const {
+    return y;
+}
+
+float Ant::getTargetX() const {
+    return target_x;
+}
+
+float Ant::getTargetY() const {
+    return target_y;
+}
+
+void Ant::add_subscriber(AntListener* sub) {
+    subscribers.push_back(sub);
+}
+
+void Ant::lower_health(const int damage) {
+    health -= damage;
+    if (health <= Config::Ant::start_age) {
+        terminate();
+    }
+}
+
+void Ant::increase_health(const int health) {
+    this->health += health;
+    if (this->health > Config::Ant::max_age)
+        this->health = Config::Ant::max_age;
 }
