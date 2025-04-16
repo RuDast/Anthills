@@ -106,8 +106,21 @@ void Ant::update(const float deltaTime) {
     const float distance = std::sqrt(delta_x * delta_x + delta_y * delta_y);
 
     if (distance < Config::EPSILON) {
-        if (state == State::busy)
-            state = State::wait;
+        if (state == State::busy && carried_food != nullptr) {
+            state = State::going;
+            carried_food->setState(FoodState::going);
+            setTarget(Config::Anthill::sklad_x, Config::Anthill::sklad_y);
+            carried_food->terminate();
+        } else if (state == State::going && carried_food != nullptr) {
+            carried_food->setState(FoodState::on_sklad);
+            if (anthill != nullptr) {
+                anthill->addDeliveredFood();
+            }
+            carried_food = nullptr;
+            state = State::free;
+
+        }
+
         need_to_move = true;
         return;
     }
@@ -173,5 +186,13 @@ void Ant::set_state(State state) {
 
 State Ant::get_state() const {
     return state;
+}
+
+void Ant::set_food(Food *food) {
+    carried_food = food;
+}
+
+void Ant::set_anthill(Anthill *anthill) {
+    this->anthill = anthill;
 }
 

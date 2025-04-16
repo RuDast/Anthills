@@ -55,6 +55,7 @@ void Anthill::update(const float deltaTime) {
     spawn_ant(deltaTime);
     spawn_food(deltaTime);
     go_to_food();
+    clear_delivered_food();
 }
 
 void Anthill::print() const {
@@ -87,6 +88,7 @@ void Anthill::spawn_ant(const float deltaTime) {
             AntRender *new_ant_render = new AntRender(*new_ant);
             new_ant->add_subscriber(new_ant_render);
             render_manager_.addDrawable(new_ant_render);
+            new_ant->set_anthill(this);
 
             new_ant->add_new_subscriber(notification_manager);
         }
@@ -116,7 +118,6 @@ void Anthill::spawn_food(float deltaTime)
         current_count_food++;
         foods.push_back(new_food);
     }
-    // заспавнилась еда, нужно собрать ее
 }
 
 void Anthill::go_to_food() {
@@ -128,8 +129,26 @@ void Anthill::go_to_food() {
                 ant->set_state(State::busy);
                 food_->setState(FoodState::wait);
                 ant->setTarget(food_->getX(), food_->getY());
+                ant->set_food(food_);
                 return ;
             }
         }
     }
+}
+
+void Anthill::clear_delivered_food() {
+    for (size_t i = 0; i < foods.size();) {
+        if (foods[i]->getState() == FoodState::on_sklad) {
+            delete foods[i];
+            foods.erase(foods.begin() + i);
+            current_count_food--;
+        } else {
+            ++i;
+        }
+    }
+}
+
+void Anthill::addDeliveredFood() {
+    food_quantity++;
+    update_food_count_text();
 }

@@ -9,9 +9,10 @@
 enum class State {
     free,
     busy,
-    wait,
+    going,
 };
 
+class Food;
 
 class Ant {
 public:
@@ -28,9 +29,12 @@ private:
     std::vector<AntListener *> render_subscribers;
     float last_update_time = 0.0f;
 
-    std::vector<NotificationListener*> subs;
+    std::vector<NotificationListener *> subs;
 
     State state = State::free;
+    Food* carried_food = nullptr;
+    Ant* died_ant = nullptr;
+    Anthill* anthill = nullptr;
 
 public:
     void print() const;
@@ -65,13 +69,18 @@ public:
 
     void increase_health(int health);
 
-    void add_new_subscriber(NotificationListener* manager);
+    void add_new_subscriber(NotificationListener *manager);
 
     void help_with_food();
 
     void set_state(State state);
 
     State get_state() const;
+
+    void set_food(Food* food);
+
+    void set_anthill(Anthill* anthill);
+
 };
 
 

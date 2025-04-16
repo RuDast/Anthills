@@ -8,15 +8,15 @@ namespace Config {
 
     namespace Ant {
         inline constexpr int max_age = 13;
-        inline constexpr int nanny_age = 1; // 2
-        inline constexpr int soldier_age = 2; // 5
-        inline constexpr int collector_age = 3; // 8
+        inline constexpr int nanny_age = 1; // TODO 2
+        inline constexpr int soldier_age = 2; // TODO 5
+        inline constexpr int collector_age = 3; // TODO 8
         inline constexpr int cleaner_age = 10;
         inline constexpr int max_health = 100;
         inline constexpr int start_age = 0;
 
         inline constexpr float age_update_time_interval = 3.0f;
-        inline constexpr float speed = 50;
+        inline constexpr float speed = 100;
     }
 
     namespace Anthill {
@@ -25,6 +25,10 @@ namespace Config {
         inline constexpr float spawn_interval = 5.0f;
         inline constexpr int hunger_damage = 30;
         inline constexpr int spawners_count = 10;
+        inline constexpr float sklad_x = 500;
+        inline constexpr float sklad_y = 120;
+        inline constexpr float trash_x = 500;
+        inline constexpr float trash_y = 700;
     }
 
     namespace Food

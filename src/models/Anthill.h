@@ -46,6 +46,10 @@ public:
     void spawn_food(float deltaTime);
 
     void go_to_food();
+
+    void clear_delivered_food();
+
+    void addDeliveredFood();
 };
 
 

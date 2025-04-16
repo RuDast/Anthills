@@ -25,3 +25,11 @@ void Food::setState(const FoodState state) {
     this->state = state;
 }
 
+bool Food::isAlive() const {
+    return is_alive;
+}
+
+void Food::terminate() {
+    is_alive = false;
+}
+
