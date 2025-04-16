@@ -6,6 +6,7 @@
 #include "src/models/Ant.h"
 #include "src/models/Anthill.h"
 #include "src/views/AntRender.h"
+#include "src/views/FoodRender.h"
 #include "src/views/RenderManager.h"
 #include "src/views/TextureManager.h"
 

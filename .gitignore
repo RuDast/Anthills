@@ -17,6 +17,8 @@ local_config.cmake
 # Generated files
 .idea/**/contentModel.xml
 
+local_config.cmake
+
 .idea
 
 # Sensitive or high-churn files

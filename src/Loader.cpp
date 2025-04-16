@@ -30,5 +30,6 @@ int load_textures(sf::Texture &trash_texture,
     TextureManager::getInstance().loadTexture("solider_ant", "../resources/ants/soldier_ant.png");
     TextureManager::getInstance().loadTexture("collector_ant", "../resources/ants/collector_ant.png");
     TextureManager::getInstance().loadTexture("cleaner_ant", "../resources/ants/cleaner_ant.png");
+    TextureManager::getInstance().loadTexture("food", "../resources/food.png");
     return 0;
 }
