@@ -15,7 +15,7 @@ namespace Config {
         inline constexpr int max_health = 100;
         inline constexpr int start_age = 0;
 
-        inline constexpr float age_update_time_interval = 5.0f;
+        inline constexpr float age_update_time_interval = 2.0f;
         inline constexpr float speed = 50;
     }
 

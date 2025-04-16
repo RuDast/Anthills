@@ -1,5 +1,5 @@
 #include "Anthill.h"
-
+#include <iostream>
 #include "Food.h"
 #include "../constants.h"
 #include "../views/AntRender.h"
@@ -44,7 +44,7 @@ void Anthill::update(const float deltaTime) {
 
     for (unsigned i = 0; i < list_of_ants.size();) {
         list_of_ants[i]->update(deltaTime);
-        if (!list_of_ants[i]->isAlive()) {
+        if (!list_of_ants[i]->get_trash()) {
             delete list_of_ants[i];
             list_of_ants.erase(list_of_ants.begin() + i);
         } else ++i;
@@ -112,3 +112,4 @@ void Anthill::spawn_food(float deltaTime)
 
 
 }
+

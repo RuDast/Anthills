@@ -9,6 +9,7 @@ class AntRender : public DrawableEntity, public AntListener {
 public:
     AntRender(const Ant &ref);
 
+
     ~AntRender() override;
 
 private:
@@ -22,6 +23,7 @@ public:
     void draw(sf::RenderWindow &window) override;
 
     void on_change_role(const Ant &ant) override;
+
 };
 
 

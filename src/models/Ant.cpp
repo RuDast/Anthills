@@ -54,8 +54,10 @@ void Ant::updateAge(const float deltaTime) {
 }
 
 void Ant::terminate() {
-    std::cout << "Ant is died." << std::endl;
-    role = None;
+    for (auto sub : subscribers)
+    {
+        sub->on_change_role(*this);
+    }
 }
 
 void Ant::updateRole() {
@@ -153,3 +155,11 @@ void Ant::increase_health(const int health) {
     if (this->health > Config::Ant::max_age)
         this->health = Config::Ant::max_age;
 }
+
+bool Ant::get_trash() const
+{
+    return !in_trashzone;
+}
+
+
+
