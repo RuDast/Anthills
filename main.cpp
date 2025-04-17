@@ -56,7 +56,7 @@ int main() {
 
 
 
-    spawn_of_ants.setPosition(800, 0);
+    spawn_of_ants.setPosition(780, 0);
     storage.setPosition(600, 0);
     trash.setPosition(600, 650);
     spawn_of_food.setPosition(0, 0);
