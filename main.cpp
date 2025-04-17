@@ -41,7 +41,7 @@ int main() {
     for (int i = 0; i < 30; ++i) {
         sf::RectangleShape flower(sf::Vector2f(35, 35)); // Размер цветка
         flower.setTexture(&flower_texture);
-        flower.setPosition(rand() % 1200, rand() % 800);
+        flower.setPosition(rand() % 1200 + 200, rand() % 800);
         flowers.push_back(flower);
     }
 
@@ -50,7 +50,7 @@ int main() {
     for (int i = 0; i < 15; ++i) {
         sf::RectangleShape bush(sf::Vector2f(50, 50));
         bush.setTexture(&bush_texture);
-        bush.setPosition(rand() % 1200, rand() % 800);
+        bush.setPosition(rand() % 1200 + 200, rand() % 800);
         flowers.push_back(bush);
     }
 
