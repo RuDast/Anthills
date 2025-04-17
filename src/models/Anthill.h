@@ -10,7 +10,7 @@
 #include "../constants.h"
 #include "../views/RenderManager.h"
 #include "Enemy.h"
-
+#include "../views/CorpseRender.h"
 
 
 class Anthill {
@@ -35,7 +35,7 @@ private:
     int current_count_food = 0;
     NotificationListener* notification_manager;
     std::vector<Food*> foods;
-    // died ants
+    std::vector<Corpse*> corpses;
 
 public:
     bool add_ant(Ant *ant);
@@ -55,6 +55,12 @@ public:
     void clear_delivered_food();
 
     void addDeliveredFood();
+
+    void go_to_corpse();
+
+    void clear_collected_corpses();
+
+    void addCorpse(Corpse* c);
 };
 
 

@@ -15,7 +15,7 @@ AntRender::AntRender(const Ant &ref) : ant_(ref)
 
 bool AntRender::isAlive()
 {
-    return ant_.get_trash();
+    return ant_.isAlive();
 }
 
 void AntRender::draw(sf::RenderWindow &window)

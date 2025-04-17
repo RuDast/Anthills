@@ -11,12 +11,12 @@ namespace Config {
         inline constexpr int nanny_age = 1; // TODO 2
         inline constexpr int soldier_age = 2; // TODO 5
         inline constexpr int collector_age = 3; // TODO 8
-        inline constexpr int cleaner_age = 10;
+        inline constexpr int cleaner_age = 5;
         inline constexpr int max_health = 100;
         inline constexpr int start_age = 0;
 
-        inline constexpr float age_update_time_interval = 2.0f;
-        inline constexpr float speed = 50;
+        inline constexpr float age_update_time_interval = 4.0f;
+        inline constexpr float speed = 100;
     }
 
     namespace Anthill {

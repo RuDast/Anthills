@@ -1,6 +1,8 @@
 #include "Ant.h"
 #include <cmath>
 #include <iostream>
+#include "Anthill.h"
+#include "Food.h"
 #include "../constants.h"
 #include "Roles/CleanerRole.h"
 #include "Roles/CollectorRole.h"
@@ -8,15 +10,16 @@
 #include "Roles/NoneRole.h"
 #include "Roles/SoliderRole.h"
 #include "informers/AntListener.h"
+#include "informers/NotificationListener.h"
 
 
 Ant::Ant(const float x, const float y) : age(Config::Ant::start_age),
-health(Config::Ant::max_health),
-role(None),
-x(x),
-y(y),
-target_x(x),
-target_y(y) {
+                                         health(Config::Ant::max_health),
+                                         role(None),
+                                         x(x),
+                                         y(y),
+                                         target_x(x),
+                                         target_y(y) {
 }
 
 void Ant::print() const {
@@ -28,12 +31,19 @@ void Ant::print() const {
 
 void Ant::setRole(Role* new_role) {
     if (role != new_role) {
+        std::cout << "Ant " << this << " сменил роль на ";
+        new_role->print();
+        std::cout << ", текущее состояние: " << (int)state << "\n";
+
         role = new_role;
+        state = State::free; // сбрасываем состояние
+        need_to_move = true;
         for (const auto &sub: render_subscribers) {
             sub->on_change_role(*this);
         }
     }
 }
+
 
 Role* Ant::getRole() const {
     return role;
@@ -54,10 +64,14 @@ void Ant::updateAge(const float deltaTime) {
 }
 
 void Ant::terminate() {
-    for (auto sub : subscribers)
-    {
-        sub->on_change_role(*this);
+    if (anthill) {
+        anthill->addCorpse(new Corpse(x, y));
     }
+    // for (auto sub : render_subscribers)
+    // {
+    //     sub->on_change_role(*this);
+    // }
+
 }
 
 void Ant::updateRole() {
@@ -78,18 +92,10 @@ void Ant::updateRole() {
         setRole(Cleaner);
         break;
 
-
-
-
-
-
     default:
         break;
     }
 }
-
-
-
 
 
 bool Ant::isAlive() const {
@@ -107,45 +113,54 @@ void Ant::update(const float deltaTime) {
 
     updateAge(deltaTime);
 
-    if (need_to_move && state == State::free && getRole() != None) {
-        need_to_move = false;
-        // setTarget(rand() % 1200, rand() % 800);
-    }
+    // if (need_to_move && state == State::free && getRole() != None) {
+    //     need_to_move = false;
+    //     // setTarget(rand() % 1200, rand() % 800);
+    // }
 
     const float delta_x = target_x - x;
     const float delta_y = target_y - y;
     const float distance = std::sqrt(delta_x * delta_x + delta_y * delta_y);
 
 
+    // … ранее в методе вычислили distance …
     if (distance < Config::EPSILON) {
-        if (state == State::busy && carried_food != nullptr) {
+        // Доставка еды на склад
+        if (state == State::going && carried_food) {
+            carried_food->setState(FoodState::on_sklad);
+            if (anthill) anthill->addDeliveredFood();
+            carried_food = nullptr;
+            state = State::free;
+        }  // Важно: освобождаем муравья
+        
+        // Доставка трупа на мусорку
+        else if (state == State::going && carried_corpse) {
+            carried_corpse->setState(CorpseState::on_trash);
+            carried_corpse = nullptr;
+            state = State::free;  // Важно: освобождаем муравья
+        }
+        // Подбор еды
+        else if (state == State::busy && carried_food) {
             state = State::going;
             carried_food->setState(FoodState::going);
             setTarget(Config::Anthill::sklad_x, Config::Anthill::sklad_y);
-            carried_food->terminate();
-        } else if (state == State::going && carried_food != nullptr) {
-            carried_food->setState(FoodState::on_sklad);
-            if (anthill != nullptr) {
-                anthill->addDeliveredFood();
-            }
-            carried_food = nullptr;
-            state = State::free;
-
         }
-
-        need_to_move = true;
-        return;
+        // Подбор трупа
+        else if (state == State::busy && carried_corpse) {
+            state = State::going;
+            carried_corpse->setState(CorpseState::going);
+            setTarget(Config::Anthill::trash_x, Config::Anthill::trash_y);
+        }
     }
 
-    const float vector_x = delta_x / distance;
-    const float vector_y = delta_y / distance;
-
-    float step = Config::Ant::speed * deltaTime;
-    if (step > distance)
-        step = distance;
-
-    x += vector_x * step;
-    y += vector_y * step;
+    // Движение к цели
+    if (distance > Config::EPSILON) {
+        const float vector_x = delta_x / distance;
+        const float vector_y = delta_y / distance;
+        float step = Config::Ant::speed * deltaTime;
+        x += vector_x * std::min(step, distance);
+        y += vector_y * std::min(step, distance);
+    }
 }
 
 float Ant::getX() const {
@@ -212,6 +227,10 @@ void Ant::set_anthill(Anthill *anthill) {
 bool Ant::get_trash() const
 {
     return !in_trashzone;
+}
+
+void Ant::setCorpse(Corpse *c) {
+    carried_corpse = c;
 }
 
 

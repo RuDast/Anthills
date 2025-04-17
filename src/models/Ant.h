@@ -1,8 +1,11 @@
 #ifndef ANT_H
 #define ANT_H
 #include <vector>
+
+#include "Corpse.h"
 #include "Role.h"
 #include "informers/AntListener.h"
+#include "informers/NotificationListener.h"
 
 enum class State {
     free,
@@ -31,7 +34,7 @@ private:
 
     State state = State::free;
     Food* carried_food = nullptr;
-    Ant* died_ant = nullptr;
+    Corpse*  carried_corpse  = nullptr;
     Anthill* anthill = nullptr;
 
 public:
@@ -79,8 +82,9 @@ public:
 
     void set_anthill(Anthill* anthill);
 
-
     bool get_trash() const;
+
+    void setCorpse(Corpse* c);
 };
 
 

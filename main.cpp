@@ -6,6 +6,7 @@
 #include "src/models/Ant.h"
 #include "src/models/Anthill.h"
 #include "src/models/Enemy.h"
+#include "src/models/informers/NotificationManager.h"
 #include "src/views/AntRender.h"
 #include "src/views/enemy_render.h"
 #include "src/views/RenderManager.h"
