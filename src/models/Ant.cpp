@@ -54,7 +54,7 @@ void Ant::updateAge(const float deltaTime) {
 }
 
 void Ant::terminate() {
-    for (auto sub : subscribers)
+    for (auto sub : render_subscribers)
     {
         sub->on_change_role(*this);
     }
