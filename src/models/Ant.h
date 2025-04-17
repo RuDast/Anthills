@@ -1,17 +1,8 @@
 #ifndef ANT_H
 #define ANT_H
 #include <vector>
-
 #include "Role.h"
 #include "informers/AntListener.h"
-
-enum {
-    ANT_MAX_AGE = 13,
-    NANNY_AGE = 2,
-    SOLIDER_AGE = 5,
-    COLLECTOR_AGE = 8,
-    CLEANER_AGE = 10
-};
 
 
 class Ant {
@@ -20,33 +11,49 @@ public:
 
 private:
     unsigned age;
-    unsigned health;
+    short health = 100;
     Role *role;
-
-    bool need_to_move = false;
+    bool in_trashzone = false;
+    bool need_to_move = true;
     float x, y;
     float target_x, target_y;
-    float angle = 0;
-    const float speed = 50;
-    std::vector<AntListener*> subscribers;
+    std::vector<AntListener *> subscribers;
     float last_update_time = 0.0f;
-    const float age_update_time_interval = 1.0f;
 
 public:
     void print() const;
+
     void setRole(Role *new_role);
-    Role* getRole() const;
+
+    Role *getRole() const;
+
     void updateAge(float deltaTime);
+
     void terminate();
+
     void updateRole();
+
     bool isAlive() const;
+
     void setTarget(float x, float y);
+
     void update(float deltaTime);
+
     float getX() const;
+
     float getY() const;
+
     float getTargetX() const;
+
     float getTargetY() const;
-    void add_subscriber(AntListener* sub);
+
+    void add_subscriber(AntListener *sub);
+
+    void lower_health(int damage);
+
+    void increase_health(int health);
+
+    bool get_trash() const;
 };
 
 

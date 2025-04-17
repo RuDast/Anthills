@@ -1,19 +1,22 @@
 #include "Ant.h"
-
 #include <cmath>
 #include <iostream>
-
+#include "../constants.h"
 #include "Roles/CleanerRole.h"
 #include "Roles/CollectorRole.h"
 #include "Roles/NannyRole.h"
 #include "Roles/NoneRole.h"
 #include "Roles/SoliderRole.h"
-
 #include "informers/AntListener.h"
 
-#define EPSILON 0.001
 
-Ant::Ant(const float x, const float y) : age(0), health(100), role(None), x(x), y(y), target_x(x), target_y(y), subscribers() {
+Ant::Ant(const float x, const float y) : age(Config::Ant::start_age),
+                                         health(Config::Ant::max_health),
+                                         role(None),
+                                         x(x),
+                                         y(y),
+                                         target_x(x),
+                                         target_y(y) {
 }
 
 void Ant::print() const {
@@ -24,11 +27,9 @@ void Ant::print() const {
 }
 
 void Ant::setRole(Role *new_role) {
-    if (role != new_role)
-    {
+    if (role != new_role) {
         role = new_role;
-        for (auto &sub : subscribers)
-        {
+        for (const auto &sub: subscribers) {
             sub->on_change_role(*this);
         }
     }
@@ -41,46 +42,49 @@ Role *Ant::getRole() const {
 void Ant::updateAge(const float deltaTime) {
     last_update_time += deltaTime;
 
-    if (last_update_time >= age_update_time_interval) {
+    if (last_update_time >= Config::Ant::age_update_time_interval) {
         ++age;
         last_update_time = 0;
         updateRole();
     }
 
-    if (age >= ANT_MAX_AGE)
+    if (age >= Config::Ant::max_age) {
         terminate();
+    }
 }
 
 void Ant::terminate() {
-    std::cout << "Ant is died." << std::endl;
-    role = None;
+    for (auto sub : subscribers)
+    {
+        sub->on_change_role(*this);
+    }
 }
 
 void Ant::updateRole() {
     switch (age) {
-        case NANNY_AGE:
-            std::cout << "The ant became a nanny." << std::endl;
+        case Config::Ant::nanny_age:
             setRole(Nanny);
-        break;
-        case SOLIDER_AGE:
-             std::cout << "The ant became a solider." << std::endl;
-             setRole(Solider);
-        break;
-        case COLLECTOR_AGE:
-            std::cout << "The ant became a collector." << std::endl;
+            break;
+
+        case Config::Ant::soldier_age:
+            setRole(Soldier);
+            break;
+
+        case Config::Ant::collector_age:
             setRole(Collector);
-        break;
-        case CLEANER_AGE:
-            std::cout << "The ant became a cleaner." << std::endl;
+            break;
+
+        case Config::Ant::cleaner_age:
             setRole(Cleaner);
-        break;
+            break;
+
         default:
             break;
     }
 }
 
 bool Ant::isAlive() const {
-    return age < ANT_MAX_AGE;
+    return age < Config::Ant::max_age && health > Config::Ant::start_age;
 }
 
 void Ant::setTarget(const float x, const float y) {
@@ -90,21 +94,28 @@ void Ant::setTarget(const float x, const float y) {
 
 void Ant::update(const float deltaTime) {
     if (!isAlive())
-        return ;
+        return;
 
     updateAge(deltaTime);
+
+    if (need_to_move && getRole() != None) {
+        need_to_move = false;
+        setTarget(rand() % 1200, rand() % 800);
+    }
 
     const float delta_x = target_x - x;
     const float delta_y = target_y - y;
     const float distance = std::sqrt(delta_x * delta_x + delta_y * delta_y);
 
-    if (distance < EPSILON)
+    if (distance < Config::EPSILON) {
+        need_to_move = true;
         return;
+    }
 
     const float vector_x = delta_x / distance;
     const float vector_y = delta_y / distance;
 
-    float step = speed * deltaTime;
+    float step = Config::Ant::speed * deltaTime;
     if (step > distance)
         step = distance;
 
@@ -128,8 +139,27 @@ float Ant::getTargetY() const {
     return target_y;
 }
 
-void Ant::add_subscriber(AntListener* sub)
-{
+void Ant::add_subscriber(AntListener *sub) {
     subscribers.push_back(sub);
 }
+
+void Ant::lower_health(const int damage) {
+    health -= damage;
+    if (health <= Config::Ant::start_age) {
+        terminate();
+    }
+}
+
+void Ant::increase_health(const int health) {
+    this->health += health;
+    if (this->health > Config::Ant::max_age)
+        this->health = Config::Ant::max_age;
+}
+
+bool Ant::get_trash() const
+{
+    return !in_trashzone;
+}
+
+
 

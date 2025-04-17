@@ -3,14 +3,15 @@
 #include "../Role.h"
 
 
-class SoliderRole: public Role {
+class SoliderRole : public Role {
     void work() override;
 
 public:
     ~SoliderRole() override;
+
     void print() override;
 };
 
-inline Role* Solider = new SoliderRole;
+inline Role *Soldier = new SoliderRole;
 
 #endif //SOLIDERROLE_H
