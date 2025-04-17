@@ -11,12 +11,12 @@
 
 
 Ant::Ant(const float x, const float y) : age(Config::Ant::start_age),
-                                         health(Config::Ant::max_health),
-                                         role(None),
-                                         x(x),
-                                         y(y),
-                                         target_x(x),
-                                         target_y(y) {
+health(Config::Ant::max_health),
+role(None),
+x(x),
+y(y),
+target_x(x),
+target_y(y) {
 }
 
 void Ant::print() const {
@@ -26,16 +26,16 @@ void Ant::print() const {
     role->print();
 }
 
-void Ant::setRole(Role *new_role) {
+void Ant::setRole(Role* new_role) {
     if (role != new_role) {
         role = new_role;
-        for (const auto &sub: subscribers) {
+        for (const auto& sub : subscribers) {
             sub->on_change_role(*this);
         }
     }
 }
 
-Role *Ant::getRole() const {
+Role* Ant::getRole() const {
     return role;
 }
 
@@ -62,26 +62,35 @@ void Ant::terminate() {
 
 void Ant::updateRole() {
     switch (age) {
-        case Config::Ant::nanny_age:
-            setRole(Nanny);
-            break;
+    case Config::Ant::nanny_age:
+        setRole(Nanny);
+        break;
 
-        case Config::Ant::soldier_age:
-            setRole(Soldier);
-            break;
+    case Config::Ant::soldier_age:
+        setRole(Soldier);
+        break;
 
-        case Config::Ant::collector_age:
-            setRole(Collector);
-            break;
+    case Config::Ant::collector_age:
+        setRole(Collector);
+        break;
 
-        case Config::Ant::cleaner_age:
-            setRole(Cleaner);
-            break;
+    case Config::Ant::cleaner_age:
+        setRole(Cleaner);
+        break;
 
-        default:
-            break;
+
+
+
+
+
+    default:
+        break;
     }
 }
+
+
+
+
 
 bool Ant::isAlive() const {
     return age < Config::Ant::max_age && health > Config::Ant::start_age;
@@ -97,7 +106,6 @@ void Ant::update(const float deltaTime) {
         return;
 
     updateAge(deltaTime);
-
     if (need_to_move && getRole() != None) {
         need_to_move = false;
         setTarget(rand() % 1200, rand() % 800);
@@ -106,6 +114,7 @@ void Ant::update(const float deltaTime) {
     const float delta_x = target_x - x;
     const float delta_y = target_y - y;
     const float distance = std::sqrt(delta_x * delta_x + delta_y * delta_y);
+
 
     if (distance < Config::EPSILON) {
         need_to_move = true;
@@ -139,7 +148,7 @@ float Ant::getTargetY() const {
     return target_y;
 }
 
-void Ant::add_subscriber(AntListener *sub) {
+void Ant::add_subscriber(AntListener* sub) {
     subscribers.push_back(sub);
 }
 

@@ -91,6 +91,38 @@ void Anthill::update_food_count_text() const {
     food_count.setString("Food: " + std::to_string(food_quantity));
 }
 
+
+
+void CheckCollisions(const std::vector<Enemy*>& enemies, const std::vector<Ant*>& ants)
+{
+
+    for (Enemy* enemy : enemies)
+    {
+        {
+            for (Ant* ant : ants)
+            {
+                float enemyX = enemy->getX();
+                float enemyY = enemy->getY();
+
+                float antX = ant->getX();
+                float antY = ant->getY();
+
+
+                if (enemyX == antX && enemyY == antY)
+                {
+                    ant->die();
+
+                    std::cout << "Муравей в позиции ("
+                        << antX << ", " << antY
+                        << ") погиб!" << std::endl;
+                    break;
+                }
+
+            }
+        }
+    }
+}
+
 void Anthill::spawn_food(float deltaTime)
 {
     last_food_spawn_time += deltaTime;
