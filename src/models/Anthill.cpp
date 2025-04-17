@@ -110,7 +110,7 @@ void CheckCollisions(const std::vector<Enemy*>& enemies, const std::vector<Ant*>
 
                 if (enemyX == antX && enemyY == antY)
                 {
-                    ant->die();
+                    ant->terminate();
 
                     std::cout << "Муравей в позиции ("
                         << antX << ", " << antY
