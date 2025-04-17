@@ -3,6 +3,7 @@
 #include <vector>
 #include "Role.h"
 #include "informers/AntListener.h"
+#include "Anthill.h"
 
 
 class Ant {
@@ -12,20 +13,22 @@ public:
 private:
     unsigned age;
     short health = 100;
-    Role *role;
+    Role* role;
 
     bool need_to_move = true;
     float x, y;
     float target_x, target_y;
-    std::vector<AntListener *> subscribers;
+    std::vector<AntListener*> subscribers;
     float last_update_time = 0.0f;
+
+    bool alive = true;
 
 public:
     void print() const;
 
-    void setRole(Role *new_role);
+    void setRole(Role* new_role);
 
-    Role *getRole() const;
+    Role* getRole() const;
 
     void updateAge(float deltaTime);
 
@@ -47,11 +50,13 @@ public:
 
     float getTargetY() const;
 
-    void add_subscriber(AntListener *sub);
+    void add_subscriber(AntListener* sub);
 
     void lower_health(int damage);
 
     void increase_health(int health);
+
+    void die() { alive = false; }
 };
 
 

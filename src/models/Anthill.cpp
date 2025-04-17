@@ -91,6 +91,7 @@ void Anthill::update_food_count_text() const {
 
 void CheckCollisions(const std::vector<Enemy*>& enemies, const std::vector<Ant*>& ants)
 {
+
     for (Enemy* enemy : enemies)
     {
         {
@@ -105,7 +106,12 @@ void CheckCollisions(const std::vector<Enemy*>& enemies, const std::vector<Ant*>
 
                 if (enemyX == antX && enemyY == antY)
                 {
-                    std::cout << "столкновение" << std::endl;
+                    ant->die();
+
+                    std::cout << "Муравей в позиции ("
+                        << antX << ", " << antY
+                        << ") погиб!" << std::endl;
+                    break;
                 }
 
             }

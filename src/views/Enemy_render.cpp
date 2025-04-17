@@ -19,7 +19,7 @@ void EnemyRender::update() {
 
 void EnemyRender::draw(sf::RenderWindow &window) {
     shape.setPosition(enemy.getX(), enemy.getY());
-    std::cout << enemy.getX() << ' ' << enemy.getY() << std::endl;
+    //std::cout << enemy.getX() << ' ' << enemy.getY() << std::endl;
     window.draw(shape);
 }
 
