@@ -6,6 +6,7 @@
 #include "../views/FoodRender.h"
 #include "Roles/CollectorRole.h"
 #include "Roles/NoneRole.h"
+#include "Roles/CleanerRole.h"
 
 Anthill::Anthill(RenderManager &render_manager,
                  sf::Text &food_count_text,
@@ -55,6 +56,7 @@ void Anthill::update(const float deltaTime) {
     spawn_ant(deltaTime);
     spawn_food(deltaTime);
     go_to_food();
+    go_to_trash();
     clear_delivered_food();
 }
 
@@ -135,6 +137,27 @@ void Anthill::go_to_food() {
         }
     }
 }
+
+
+
+
+void Anthill::go_to_trash() {
+    for (const auto died_ant : list_of_ants) 
+    {
+        if (!died_ant->isAlive())
+        {
+            for (auto& ant : list_of_ants) {
+                if (ant->isAlive() && ant->get_state() == State::free && ant->getRole() == Cleaner) {
+                    ant->set_state(State::busy);
+                    ant->setTarget(died_ant->getX(), died_ant->getY());
+                    ant->set_died_ant(died_ant);
+                    return;
+                }
+            }
+        }
+    }
+}
+
 
 void Anthill::clear_delivered_food() {
     for (size_t i = 0; i < foods.size();) {

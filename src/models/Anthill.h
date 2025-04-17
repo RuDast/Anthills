@@ -50,6 +50,8 @@ public:
     void clear_delivered_food();
 
     void addDeliveredFood();
+
+    void go_to_trash();
 };
 
 

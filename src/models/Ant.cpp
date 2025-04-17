@@ -54,7 +54,7 @@ void Ant::updateAge(const float deltaTime) {
 }
 
 void Ant::terminate() {
-    for (auto sub : subscribers)
+    for (auto sub : render_subscribers)
     {
         sub->on_change_role(*this);
     }
@@ -108,19 +108,31 @@ void Ant::update(const float deltaTime) {
     const float distance = std::sqrt(delta_x * delta_x + delta_y * delta_y);
 
     if (distance < Config::EPSILON) {
-        if (state == State::busy && carried_food != nullptr) {
+        if (getRole() == Collector && state == State::busy && carried_food != nullptr) {
             state = State::going;
             carried_food->setState(FoodState::going);
             setTarget(Config::Anthill::sklad_x, Config::Anthill::sklad_y);
             carried_food->terminate();
-        } else if (state == State::going && carried_food != nullptr) {
+        } else if (getRole() == Collector &&  state == State::going && carried_food != nullptr) {
             carried_food->setState(FoodState::on_sklad);
             if (anthill != nullptr) {
                 anthill->addDeliveredFood();
             }
             carried_food = nullptr;
             state = State::free;
-
+        }
+        else if (getRole() == Cleaner && state == State::busy && died_ant != nullptr) {
+            std::cout << "Ant has gone to died ant." << std::endl;
+            state = State::going;
+            died_ant->set_state(State::died);
+            setTarget(Config::Anthill::trash_x, Config::Anthill::trash_y);
+            died_ant->set_trash();
+        }
+        else if (getRole() == Cleaner && state == State::going && died_ant != nullptr) {
+            std::cout << "Ant has gone to trash zone." << std::endl;
+            died_ant->set_state(State::trash);
+            died_ant = nullptr;
+            state = State::free;
         }
 
         need_to_move = true;
@@ -202,6 +214,16 @@ void Ant::set_anthill(Anthill *anthill) {
 bool Ant::get_trash() const
 {
     return !in_trashzone;
+}
+
+void Ant::set_trash()
+{
+    in_trashzone = true;
+}
+
+void Ant::set_died_ant(Ant* died_ant)
+{
+    this->died_ant = died_ant;
 }
 
 

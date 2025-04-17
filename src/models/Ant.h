@@ -10,6 +10,8 @@ enum class State {
     free,
     busy,
     going,
+    died,
+    trash,
 };
 
 class Food;
@@ -81,8 +83,11 @@ public:
 
     void set_anthill(Anthill* anthill);
 
-
     bool get_trash() const;
+
+    void set_trash();
+
+    void set_died_ant(Ant* died_ant);
 };
 
 
