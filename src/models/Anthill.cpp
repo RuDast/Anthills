@@ -1,5 +1,5 @@
 #include "Anthill.h"
-
+#include <iostream>
 #include "Food.h"
 #include "../constants.h"
 #include "../views/AntRender.h"
@@ -47,7 +47,7 @@ void Anthill::update(const float deltaTime) {
 
     for (unsigned i = 0; i < list_of_ants.size();) {
         list_of_ants[i]->update(deltaTime);
-        if (!list_of_ants[i]->isAlive()) {
+        if (!list_of_ants[i]->get_trash()) {
             delete list_of_ants[i];
             list_of_ants.erase(list_of_ants.begin() + i);
         } else ++i;
@@ -97,6 +97,38 @@ void Anthill::spawn_ant(const float deltaTime) {
 
 void Anthill::update_food_count_text() const {
     food_count.setString("Food: " + std::to_string(food_quantity));
+}
+
+
+
+void CheckCollisions(const std::vector<Enemy*>& enemies, const std::vector<Ant*>& ants)
+{
+
+    for (Enemy* enemy : enemies)
+    {
+        {
+            for (Ant* ant : ants)
+            {
+                float enemyX = enemy->getX();
+                float enemyY = enemy->getY();
+
+                float antX = ant->getX();
+                float antY = ant->getY();
+
+
+                if (enemyX == antX && enemyY == antY)
+                {
+                    ant->terminate();
+
+                    std::cout << "Муравей в позиции ("
+                        << antX << ", " << antY
+                        << ") погиб!" << std::endl;
+                    break;
+                }
+
+            }
+        }
+    }
 }
 
 void Anthill::spawn_food(float deltaTime)
@@ -152,3 +184,4 @@ void Anthill::addDeliveredFood() {
     food_quantity++;
     update_food_count_text();
 }
+

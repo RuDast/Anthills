@@ -5,8 +5,9 @@
 #include "src/Loader.h"
 #include "src/models/Ant.h"
 #include "src/models/Anthill.h"
+#include "src/models/Enemy.h"
 #include "src/views/AntRender.h"
-#include "src/views/FoodRender.h"
+#include "src/views/enemy_render.h"
 #include "src/views/RenderManager.h"
 #include "src/views/TextureManager.h"
 
@@ -66,8 +67,6 @@ int main() {
     Anthill anthill(render_manager, food_count, notification_manager);
     notification_manager->connectAnthill(&anthill);
     anthill.update_food_count_text();
-
-
 
     while (window.isOpen()) {
         float deltaTime = clock.restart().asSeconds();

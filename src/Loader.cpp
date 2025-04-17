@@ -26,10 +26,17 @@ int load_textures(sf::Texture &trash_texture,
         return -1;
     }
 
-    TextureManager::getInstance().loadTexture("common_ant", "../resources/ants/common_ant.png");
+    TextureManager::getInstance().loadTexture("baby_ant", "../resources/ants/baby_ant.png");
+    TextureManager::getInstance().loadTexture("nanny_ant", "../resources/ants/nanny_ant.png");
     TextureManager::getInstance().loadTexture("solider_ant", "../resources/ants/soldier_ant.png");
     TextureManager::getInstance().loadTexture("collector_ant", "../resources/ants/collector_ant.png");
     TextureManager::getInstance().loadTexture("cleaner_ant", "../resources/ants/cleaner_ant.png");
+
+    TextureManager::getInstance().loadTexture("dnanny_ant", "../resources/ants/died_nanny_ant.png");
+    TextureManager::getInstance().loadTexture("dsolider_ant", "../resources/ants/died_soldier_ant.png");
+    TextureManager::getInstance().loadTexture("dcollector_ant", "../resources/ants/died_collector_ant.png");
+    TextureManager::getInstance().loadTexture("dcleaner_ant", "../resources/ants/died_cleaner_ant.png");
+
     TextureManager::getInstance().loadTexture("food", "../resources/food.png");
     return 0;
 }

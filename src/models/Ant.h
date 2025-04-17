@@ -3,8 +3,6 @@
 #include <vector>
 #include "Role.h"
 #include "informers/AntListener.h"
-#include "informers/NotificationListener.h"
-#include "informers/NotificationManager.h"
 
 enum class State {
     free,
@@ -22,7 +20,7 @@ private:
     unsigned age;
     short health;
     Role *role;
-
+    bool in_trashzone = false;
     bool need_to_move = true;
     float x, y;
     float target_x, target_y;
@@ -39,9 +37,9 @@ private:
 public:
     void print() const;
 
-    void setRole(Role *new_role);
+    void setRole(Role* new_role);
 
-    Role *getRole() const;
+    Role* getRole() const;
 
     void updateAge(float deltaTime);
 
@@ -63,7 +61,7 @@ public:
 
     float getTargetY() const;
 
-    void add_subscriber(AntListener *sub);
+    void add_subscriber(AntListener* sub);
 
     void lower_health(int damage);
 
@@ -81,6 +79,8 @@ public:
 
     void set_anthill(Anthill* anthill);
 
+
+    bool get_trash() const;
 };
 
 

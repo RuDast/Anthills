@@ -1,11 +1,16 @@
 #ifndef ANTHILL_H
 #define ANTHILL_H
 #include <vector>
+#include <iostream>
+
+
 #include "Ant.h"
 #include <SFML/Graphics/Text.hpp>
 #include "Food.h"
 #include "../constants.h"
 #include "../views/RenderManager.h"
+#include "Enemy.h"
+
 
 
 class Anthill {
