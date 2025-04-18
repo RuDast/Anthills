@@ -24,6 +24,8 @@ private:
     bool alive = true;
 
 public:
+    void kill();
+
     void print() const;
 
     void setRole(Role* new_role);

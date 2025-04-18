@@ -7,7 +7,7 @@ namespace Config {
     inline constexpr double EPSILON = 0.0001;
 
     namespace Ant {
-        inline constexpr int max_age = 13;
+        inline constexpr int max_age = 100;
         inline constexpr int nanny_age = 2;
         inline constexpr int soldier_age = 5;
         inline constexpr int collector_age = 8;
@@ -32,6 +32,13 @@ namespace Config {
         inline constexpr float spawn_interval = 5.0f;
         inline constexpr int max_count_of_food = 10;
 
+    }
+
+    namespace Enemy
+    {
+        inline constexpr float spawn_interval = 5.0f;
+        inline constexpr int max_count_of_enemy = 3;
+        inline constexpr float distance = 100.0f;
     }
 }
 

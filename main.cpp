@@ -66,9 +66,7 @@ int main() {
     Anthill anthill(render_manager, food_count);
     anthill.update_food_count_text();
 
-    Enemy enemy(200, 200);
-    EnemyRender enemy_render(enemy, 20, sf::Color(128, 128, 128));
-    render_manager.addDrawable(&enemy_render);
+
 
     while (window.isOpen()) {
         float deltaTime = clock.restart().asSeconds();
@@ -82,7 +80,7 @@ int main() {
         window.clear();
 
         anthill.update(deltaTime);
-        enemy.update(deltaTime);
+
 
         window.draw(background);
         window.draw(spawn_of_ants);

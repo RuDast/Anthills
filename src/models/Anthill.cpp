@@ -5,10 +5,18 @@
 #include "../views/AntRender.h"
 #include "../views/FoodRender.h"
 #include "Roles/NoneRole.h"
+#include <math.h>
+
+#include "../views/enemy_render.h"
+#include "Roles/SoliderRole.h"
 
 Anthill::Anthill(RenderManager &render_manager,
                  sf::Text &food_count_text) : render_manager_(render_manager),
-                                              food_count(food_count_text) {
+                                              food_count(food_count_text), list_of_enemy(Config::Enemy::max_count_of_enemy)
+{
+    for (int i = 0; i < Config::Enemy::max_count_of_enemy; ++i) {
+        list_of_enemy[i] = new Enemy(0, 0);  // Задайте начальные координаты
+    }
     size = Config::Anthill::default_size;
     for (int i = 0; i < Config::Anthill::spawners_count; i++) {
         ants_in_spawners[i] = nullptr;
@@ -16,6 +24,7 @@ Anthill::Anthill(RenderManager &render_manager,
     for (int i = 0; i < Config::Anthill::spawners_count; ++i) {
         free_spawners[i] = true;
     }
+
 }
 
 bool Anthill::add_ant(Ant *ant) {
@@ -51,6 +60,21 @@ void Anthill::update(const float deltaTime) {
     }
     spawn_ant(deltaTime);
     spawn_food(deltaTime);
+    spawn_enemy(deltaTime);
+    CheckCollisions(list_of_enemy, list_of_ants);
+    for(int i = 0; i < list_of_enemy.size();)
+    {
+        if (list_of_enemy[i] == nullptr) {
+            i++;
+            continue;
+        }
+        list_of_enemy[i]->update(deltaTime);
+        if(!list_of_enemy[i]->getIsAlive())
+        {
+            delete list_of_enemy[i];
+            list_of_enemy.erase(list_of_enemy.begin() + i);
+        } else ++i;
+    }
 }
 
 void Anthill::print() const {
@@ -93,37 +117,42 @@ void Anthill::update_food_count_text() const {
 
 
 
-void CheckCollisions(const std::vector<Enemy*>& enemies, const std::vector<Ant*>& ants)
+void Anthill::CheckCollisions(const std::vector<Enemy*>& enemies, const std::vector<Ant*>& ants)
 {
 
-    for (Enemy* enemy : enemies)
-    {
-        {
-            for (Ant* ant : ants)
-            {
-                float enemyX = enemy->getX();
-                float enemyY = enemy->getY();
+    for (Enemy* enemy : enemies) {
+        if (!enemy->getIsAlive()) continue;
+        bool enemyWasKilled = false;
 
-                float antX = ant->getX();
-                float antY = ant->getY();
+        for (Ant* ant : ants) {
+            if (!ant->isAlive()) continue;
 
+            float dX = enemy->getX() - ant->getX();
+            float dY = enemy->getY() - ant->getY();
+            float distanceSquared = dX * dX + dY * dY;
 
-                if (enemyX == antX && enemyY == antY)
-                {
-                    ant->die();
-
-                    std::cout << "Муравей в позиции ("
-                        << antX << ", " << antY
-                        << ") погиб!" << std::endl;
-                    break;
+            if (distanceSquared <= Config::Enemy::distance*Config::Enemy::distance) {
+                if (ant->getRole() == Soldier) {
+                    enemy->setAlive(false);
+                    enemyWasKilled = true;
+                    current_count_enemy--;
                 }
-
+                else {
+                    ant->kill();
+                }
+                break;
             }
         }
+
+        if (enemyWasKilled)  { continue;
+        }
     }
+
+
+
 }
 
-void Anthill::spawn_food(float deltaTime)
+void Anthill::spawn_food(float deltaTime )
 {
     last_food_spawn_time += deltaTime;
 
@@ -139,9 +168,31 @@ void Anthill::spawn_food(float deltaTime)
         FoodRender *new_food_render = new FoodRender(*new_food);
         render_manager_.addDrawable(new_food_render);
 
+
         current_count_food++;
     }
 
 
 }
 
+void Anthill::spawn_enemy(float deltaTime)
+{
+    last_enemy_spawn_time += deltaTime;
+
+    if (last_enemy_spawn_time < Config::Enemy::spawn_interval) {
+        return;
+    }
+
+    last_enemy_spawn_time = 0;
+
+        if (current_count_enemy < Config::Enemy::max_count_of_enemy)
+        {
+            Enemy* new_enemy = new Enemy(50 + rand()%300,200);
+            EnemyRender *new_enemy_render = new EnemyRender(*new_enemy);
+            render_manager_.addDrawable(new_enemy_render);
+
+            list_of_enemy.push_back(new_enemy);
+            current_count_enemy++;
+        }
+
+}

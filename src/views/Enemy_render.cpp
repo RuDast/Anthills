@@ -1,28 +1,31 @@
 #include <iostream>
-
+#include "TextureManager.h"
 #include "enemy_render.h"
 
-EnemyRender::EnemyRender(const Enemy& enemy, float radius, const sf::Color& color)
-    : enemy(enemy), shape(radius) {
-    shape.setFillColor(color);
-    shape.setOrigin(radius, radius);
-    update();
+EnemyRender::EnemyRender(const Enemy& enemy): enemy_(enemy)
+{
+    sprite_.setTexture(TextureManager::getInstance().getTexture("enemy"));
 }
 
-void EnemyRender::update() {
-    shape.setPosition(enemy.getX(), enemy.getY());
+
+void EnemyRender::draw(sf::RenderWindow &window)
+{
+    const float X = enemy_.getX();
+    const float Y = enemy_.getY();
+
+    sprite_.setPosition(X,Y);
+    window.draw(sprite_);
 }
 
-// void EnemyRender::draw(sf::RenderTarget& target) const {
-//     target.draw(shape);
-// }
-
-void EnemyRender::draw(sf::RenderWindow &window) {
-    shape.setPosition(enemy.getX(), enemy.getY());
-    //std::cout << enemy.getX() << ' ' << enemy.getY() << std::endl;
-    window.draw(shape);
+bool EnemyRender::isAlive()
+{
+    return enemy_.getIsAlive();
 }
 
-bool EnemyRender::isAlive() {
-    return true;
+
+EnemyRender::~EnemyRender()
+{
+    std::cout<< "EnemyRender Destructor"<<std::endl;
 }
+
+
