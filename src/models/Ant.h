@@ -38,6 +38,8 @@ private:
     Anthill* anthill = nullptr;
 
 public:
+    void kill();
+
     void print() const;
 
     void setRole(Role* new_role);

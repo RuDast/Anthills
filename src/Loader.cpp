@@ -50,6 +50,8 @@ int load_textures(sf::Texture &trash_texture,
     TextureManager::getInstance().loadTexture("dcleaner_ant", "../resources/ants/died_cleaner_ant.png");
     TextureManager::getInstance().loadTexture("corpse", "../resources/ants/died_cleaner_ant.png");
 
+
     TextureManager::getInstance().loadTexture("food", "../resources/food.png");
+    TextureManager::getInstance().loadTexture("enemy", "../resources/enemy.png");
     return 0;
 }

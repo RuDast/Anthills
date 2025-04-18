@@ -22,6 +22,12 @@ Ant::Ant(const float x, const float y) : age(Config::Ant::start_age),
                                          target_y(y) {
 }
 
+void Ant::kill()
+{
+    health = 0;
+    terminate();
+}
+
 void Ant::print() const {
     std::cout << "Age: " << age << std::endl;
     std::cout << "Health: " << health << std::endl;
@@ -52,7 +58,7 @@ void Ant::updateAge(const float deltaTime) {
         updateRole();
     }
 
-    if (age >= Config::Ant::max_age) {
+    if (age >= Config::Ant::max_age || health <= 0) {
         terminate();
     }
 }

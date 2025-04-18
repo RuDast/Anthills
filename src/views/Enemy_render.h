@@ -1,20 +1,27 @@
 #ifndef ENEMY_RENDER_H
 #define ENEMY_RENDER_H
+#include <SFML/Graphics/Sprite.hpp>
 
-#include <SFML/Graphics.hpp>
 
 #include "DrawableEntity.h"
 #include "../models/Enemy.h"
 
-class EnemyRender : public DrawableEntity {
-    const Enemy& enemy;
-    sf::CircleShape shape;
 
+
+class EnemyRender : public DrawableEntity
+{
 public:
-    EnemyRender(const Enemy& enemy, float radius, const sf::Color& color);
+    EnemyRender(const Enemy& enemy);
+    ~EnemyRender() override;
+private:
+    const Enemy& enemy_;
+    sf::Sprite sprite_;
+    float x, y;
+public:
+
+
 
     void update();
-    // void draw(sf::RenderTarget& target) const;
 
     void draw(sf::RenderWindow &window) override;
 

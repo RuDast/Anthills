@@ -8,6 +8,10 @@
 #include "Roles/CleanerRole.h"
 #include "Roles/CollectorRole.h"
 #include "Roles/NoneRole.h"
+#include <math.h>
+
+#include "../views/enemy_render.h"
+#include "Roles/SoliderRole.h"
 
 Anthill::Anthill(RenderManager &render_manager,
                  sf::Text &food_count_text,
@@ -21,6 +25,7 @@ Anthill::Anthill(RenderManager &render_manager,
     for (int i = 0; i < Config::Anthill::spawners_count; ++i) {
         free_spawners[i] = true;
     }
+
 }
 
 bool Anthill::add_ant(Ant *ant) {
@@ -65,6 +70,21 @@ void Anthill::update(const float deltaTime) {
 
     go_to_corpse(); // здесь распределяем чистильщиков по трупам
     // clear_collected_corpses();; // очистка собранных трупов
+    spawn_enemy(deltaTime);
+    CheckCollisions(list_of_enemy, list_of_ants);
+    for(int i = 0; i < list_of_enemy.size();)
+    {
+        if (list_of_enemy[i] == nullptr) {
+            i++;
+            continue;
+        }
+        list_of_enemy[i]->update(deltaTime);
+        if(!list_of_enemy[i]->getIsAlive())
+        {
+            delete list_of_enemy[i];
+            list_of_enemy.erase(list_of_enemy.begin() + i);
+        } else ++i;
+    }
 }
 
 void Anthill::print() const {
@@ -109,31 +129,44 @@ void Anthill::update_food_count_text() const {
 }
 
 
-void CheckCollisions(const std::vector<Enemy *> &enemies, const std::vector<Ant *> &ants) {
-    for (Enemy *enemy: enemies) {
-        {
-            for (Ant *ant: ants) {
-                float enemyX = enemy->getX();
-                float enemyY = enemy->getY();
 
-                float antX = ant->getX();
-                float antY = ant->getY();
+void Anthill::CheckCollisions(const std::vector<Enemy*>& enemies, const std::vector<Ant*>& ants)
+{
 
+    for (Enemy* enemy : enemies) {
+        if (!enemy->getIsAlive()) continue;
+        bool enemyWasKilled = false;
 
-                if (enemyX == antX && enemyY == antY) {
-                    ant->terminate();
+        for (Ant* ant : ants) {
+            if (!ant->isAlive()) continue;
 
-                    std::cout << "Муравей в позиции ("
-                            << antX << ", " << antY
-                            << ") погиб!" << std::endl;
-                    break;
+            float dX = enemy->getX() - ant->getX();
+            float dY = enemy->getY() - ant->getY();
+            float distanceSquared = dX * dX + dY * dY;
+
+            if (distanceSquared <= Config::Enemy::distance*Config::Enemy::distance) {
+                if (ant->getRole() == Soldier) {
+                    enemy->setAlive(false);
+                    enemyWasKilled = true;
+                    current_count_enemy--;
                 }
+                else {
+                    ant->kill();
+                }
+                break;
             }
         }
+
+        if (enemyWasKilled)  { continue;
+        }
     }
+
+
+
 }
 
-void Anthill::spawn_food(float deltaTime) {
+void Anthill::spawn_food(float deltaTime )
+{
     last_food_spawn_time += deltaTime;
 
     if (last_food_spawn_time < Config::Food::spawn_interval) {
@@ -146,6 +179,7 @@ void Anthill::spawn_food(float deltaTime) {
         const auto new_food = new Food();
         DrawableEntity *new_food_render = new FoodRender(*new_food);
         render_manager_.addDrawable(new_food_render);
+
 
         current_count_food++;
         foods.push_back(new_food);
@@ -180,9 +214,30 @@ void Anthill::clear_delivered_food() {
     }
 }
 
+void Anthill::spawn_enemy(float deltaTime)
+{
+    last_enemy_spawn_time += deltaTime;
 void Anthill::addDeliveredFood() {
     food_quantity++;
     update_food_count_text();
+}
+
+    if (last_enemy_spawn_time < Config::Enemy::spawn_interval) {
+        return;
+    }
+
+    last_enemy_spawn_time = 0;
+
+        if (current_count_enemy < Config::Enemy::max_count_of_enemy)
+        {
+            Enemy* new_enemy = new Enemy(50 + rand()%300,200);
+            EnemyRender *new_enemy_render = new EnemyRender(*new_enemy);
+            render_manager_.addDrawable(new_enemy_render);
+
+            list_of_enemy.push_back(new_enemy);
+            current_count_enemy++;
+        }
+
 }
 
 void Anthill::go_to_corpse() {
