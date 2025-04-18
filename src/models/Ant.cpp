@@ -107,7 +107,7 @@ void Ant::update(const float deltaTime) {
 
     updateAge(deltaTime);
 
-    if (anthill && state == State::free && role == Cleaner)
+    if (anthill && state == State::free && getRole()->isCleaner())
         anthill->go_to_corpse();
 
     // if (need_to_move && state == State::free && getRole() != None) {
@@ -135,7 +135,7 @@ void Ant::update(const float deltaTime) {
             carried_food = nullptr;
             state = State::free;
             need_to_move = true; // Важно: освобождаем муравья
-            if (role == Cleaner) {
+            if (getRole()->isCleaner()) {
                 anthill->go_to_corpse();
             }
         }
