@@ -11,6 +11,7 @@ private:
 
 public:
     virtual void print();
+    virtual bool isCleaner();
 };
 
 

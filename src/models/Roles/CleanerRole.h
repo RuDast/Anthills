@@ -10,9 +10,15 @@ public:
     ~CleanerRole() override;
 
     void print() override;
+
+    bool isCleaner() override;
 };
 
-inline Role *Cleaner = new CleanerRole;
+/**
+ *
+ */
+extern Role* Cleaner;
+// Role *Cleaner = new CleanerRole;
 
 
 #endif //CLEANERROLE_H

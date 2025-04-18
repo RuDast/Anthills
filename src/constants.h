@@ -10,8 +10,8 @@ namespace Config {
         inline constexpr int max_age = 13;
         inline constexpr int nanny_age = 1; // TODO 2
         inline constexpr int soldier_age = 2; // TODO 5
-        inline constexpr int collector_age = 3; // TODO 8
-        inline constexpr int cleaner_age = 5;
+        inline constexpr int collector_age = 5; // TODO 8
+        inline constexpr int cleaner_age = 8;
         inline constexpr int max_health = 100;
         inline constexpr int start_age = 0;
 

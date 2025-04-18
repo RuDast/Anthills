@@ -4,3 +4,7 @@
 void Role::print() {
     std::cout << "Роль муравья" << std::endl;
 }
+
+bool Role::isCleaner() {
+    return false;
+}

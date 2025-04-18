@@ -24,7 +24,7 @@ public:
 
     bool isAlive() override {
         // пока труп не доставлен на свалку, жив
-        return corpse_.getState() != CorpseState::on_trash;
+        return corpse_.isAlive();
     }
 
     void draw(sf::RenderWindow& window) override {

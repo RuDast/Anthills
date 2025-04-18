@@ -55,7 +55,6 @@ int main() {
 
     RenderManager render_manager;
 
-
     sf::Clock clock;
     sf::Font KaaosPro;
     KaaosPro.loadFromFile("../resources/fonts/KaaosPro.ttf");

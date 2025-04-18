@@ -10,3 +10,9 @@ CleanerRole::~CleanerRole() = default;
 void CleanerRole::print() {
     std::cout << "Cleaner" << std::endl;
 }
+
+bool CleanerRole::isCleaner() {
+    return true;
+}
+
+Role *Cleaner = new CleanerRole;

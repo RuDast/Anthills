@@ -26,5 +26,5 @@ bool FoodRender::isAlive()
 
 FoodRender::~FoodRender()
 {
-    std::cout<< "FoodRender Destructor"<<std::endl;
+
 }
