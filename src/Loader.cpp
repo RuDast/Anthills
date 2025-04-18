@@ -5,7 +5,7 @@
 int load_textures(sf::Texture &trash_texture,
                   sf::Texture &storage_texture,
                   sf::Texture &ant_spawn_texture,
-                  sf::Texture &background_texture) {
+                  sf::Texture &background_texture, sf::Texture &spawn_of_food_texture, sf::Texture &flower_texture, sf::Texture &bush_texture) {
     if (!trash_texture.loadFromFile("../resources/textures/trash_texture.png")) {
         std::cerr << "Error of load texture" << std::endl;
         return -1;
@@ -22,6 +22,18 @@ int load_textures(sf::Texture &trash_texture,
     }
 
     if (!background_texture.loadFromFile("../resources/textures/dirt.png")) {
+        std::cerr << "Error of load texture" << std::endl;
+        return -1;
+    }
+    if (!spawn_of_food_texture.loadFromFile("../resources/textures/spawn_of_food_texture.png")) {
+        std::cerr << "Error of load texture" << std::endl;
+        return -1;
+    }
+    if (!flower_texture.loadFromFile("../resources/textures/flower_texture.png")) {
+        std::cerr << "Error of load texture" << std::endl;
+        return -1;
+    }
+    if (!bush_texture.loadFromFile("../resources/textures/bush_texture.png")) {
         std::cerr << "Error of load texture" << std::endl;
         return -1;
     }
