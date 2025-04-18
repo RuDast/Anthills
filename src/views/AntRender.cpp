@@ -63,5 +63,5 @@ void AntRender::on_change_role(const Ant &ant)
 
 AntRender::~AntRender()
 {
-    std::cout << "AntRender Destructor" << std::endl;
+
 }

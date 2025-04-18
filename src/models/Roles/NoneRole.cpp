@@ -11,3 +11,7 @@ NoneRole::~NoneRole() = default;
 void NoneRole::print() {
     std::cout << "None" << std::endl;
 }
+
+bool NoneRole::isNone() {
+    return true;
+}

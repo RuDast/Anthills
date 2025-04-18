@@ -11,6 +11,7 @@ public:
     ~NoneRole() override;
 
     void print() override;
+    bool isNone() override;
 };
 
 inline Role *None = new NoneRole;

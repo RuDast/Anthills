@@ -10,12 +10,12 @@ namespace Config {
         inline constexpr int max_age = 13;
         inline constexpr int nanny_age = 1; // TODO 2
         inline constexpr int soldier_age = 2; // TODO 5
-        inline constexpr int collector_age = 5; // TODO 8
-        inline constexpr int cleaner_age = 8;
+        inline constexpr int collector_age = 4; // TODO 8
+        inline constexpr int cleaner_age = 5;
         inline constexpr int max_health = 100;
         inline constexpr int start_age = 0;
 
-        inline constexpr float age_update_time_interval = 4.0f;
+        inline constexpr float age_update_time_interval = 5.0f;
         inline constexpr float speed = 100;
     }
     namespace Enemy {
@@ -28,7 +28,7 @@ namespace Config {
     namespace Anthill {
         inline constexpr int max_size = 20;
         inline constexpr int default_size = 10;
-        inline constexpr float spawn_interval = 5.0f;
+        inline constexpr float spawn_interval = 6.0f;
         inline constexpr int hunger_damage = 30;
         inline constexpr int spawners_count = 10;
         inline constexpr float sklad_x = 500;

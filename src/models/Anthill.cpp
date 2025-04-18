@@ -12,8 +12,8 @@
 Anthill::Anthill(RenderManager &render_manager,
                  sf::Text &food_count_text,
                  NotificationListener *notification_manager) : render_manager_(render_manager),
-                                                              food_count(food_count_text),
-                                                              notification_manager(notification_manager) {
+                                                               food_count(food_count_text),
+                                                               notification_manager(notification_manager) {
     size = Config::Anthill::default_size;
     for (int i = 0; i < Config::Anthill::spawners_count; i++) {
         ants_in_spawners[i] = nullptr;
@@ -60,10 +60,10 @@ void Anthill::update(const float deltaTime) {
     spawn_ant(deltaTime);
     spawn_food(deltaTime);
 
-    go_to_food();               // сбор еды
-    clear_delivered_food();     // удалили уже доставленные крошки (не трогает Corpses)
+    go_to_food(); // сбор еды
+    clear_delivered_food(); // удалили уже доставленные крошки (не трогает Corpses)
 
-    go_to_corpse();             // здесь распределяем чистильщиков по трупам
+    go_to_corpse(); // здесь распределяем чистильщиков по трупам
     // clear_collected_corpses();; // очистка собранных трупов
 }
 
@@ -109,15 +109,10 @@ void Anthill::update_food_count_text() const {
 }
 
 
-
-void CheckCollisions(const std::vector<Enemy*>& enemies, const std::vector<Ant*>& ants)
-{
-
-    for (Enemy* enemy : enemies)
-    {
+void CheckCollisions(const std::vector<Enemy *> &enemies, const std::vector<Ant *> &ants) {
+    for (Enemy *enemy: enemies) {
         {
-            for (Ant* ant : ants)
-            {
+            for (Ant *ant: ants) {
                 float enemyX = enemy->getX();
                 float enemyY = enemy->getY();
 
@@ -125,23 +120,20 @@ void CheckCollisions(const std::vector<Enemy*>& enemies, const std::vector<Ant*>
                 float antY = ant->getY();
 
 
-                if (enemyX == antX && enemyY == antY)
-                {
+                if (enemyX == antX && enemyY == antY) {
                     ant->terminate();
 
                     std::cout << "Муравей в позиции ("
-                        << antX << ", " << antY
-                        << ") погиб!" << std::endl;
+                            << antX << ", " << antY
+                            << ") погиб!" << std::endl;
                     break;
                 }
-
             }
         }
     }
 }
 
-void Anthill::spawn_food(float deltaTime)
-{
+void Anthill::spawn_food(float deltaTime) {
     last_food_spawn_time += deltaTime;
 
     if (last_food_spawn_time < Config::Food::spawn_interval) {
@@ -150,10 +142,9 @@ void Anthill::spawn_food(float deltaTime)
 
     last_food_spawn_time = 0;
 
-    if(current_count_food < Config::Food::max_count_of_food)
-    {
+    if (current_count_food < Config::Food::max_count_of_food) {
         const auto new_food = new Food();
-        DrawableEntity* new_food_render = new FoodRender(*new_food);
+        DrawableEntity *new_food_render = new FoodRender(*new_food);
         render_manager_.addDrawable(new_food_render);
 
         current_count_food++;
@@ -162,16 +153,16 @@ void Anthill::spawn_food(float deltaTime)
 }
 
 void Anthill::go_to_food() {
-    for (const auto food_ : foods) {
+    for (const auto food_: foods) {
         if (food_->getState() != FoodState::free)
             continue;
-        for (auto& ant : list_of_ants) {
+        for (auto &ant: list_of_ants) {
             if (ant->get_state() == State::free && ant->getRole() == Collector) {
                 ant->set_state(State::busy);
                 food_->setState(FoodState::wait);
                 ant->setTarget(food_->getX(), food_->getY());
                 ant->set_food(food_);
-                return ;
+                return;
             }
         }
     }
@@ -195,26 +186,55 @@ void Anthill::addDeliveredFood() {
 }
 
 void Anthill::go_to_corpse() {
-    std::cout << "[INFO] go_to_corpse called. Corpses: " << corpses.size() << "\n";
+    // std::cout << "[INFO] go_to_corpse called. Corpses: " << corpses.size()
+    //           << ", ants: " << list_of_ants.size() << "\n";
+    //
+    // // 1) Выведем все состояния трупов
+    // for (auto c : corpses) {
+    //     std::cout << "  CORPSE " << c
+    //               << " state=" << int(c->getState())
+    //               << "\n";
+    // }
+
+    // 2) Выведем всех уборщиков и их состояния
+    // for (auto &ant : list_of_ants) {
+    //     std::cout << "  ANT     " << ant
+    //               << " state="     << int(ant->get_state())
+    //               << " isCleaner=" << ant->getRole()->isCleaner()
+    //               << "\n";
+    // }
+
+    // 3) Пытаемся назначить первого свободного уборщика на первый свободный труп
     for (auto c : corpses) {
-        if (c->getState() != CorpseState::free) continue;
-        for (auto& ant : list_of_ants) {
-            // ← instead of ant->getRole() == Cleaner
-            if (ant->get_state() == State::free &&
-                ant->getRole()->isCleaner())
-            {
+        if (c->getState() != CorpseState::free) {
+            // std::cout << "    skip corpse " << c << " (not free)\n";
+            continue;
+        }
+        for (auto &ant : list_of_ants) {
+            if (ant->get_state() == State::free && ant->getRole()->isCleaner()) {
+            //     std::cout << "[ASSIGN] ANT " << ant
+            //               << " -> CORPSE " << c << "\n";
                 ant->set_state(State::busy);
                 c->setState(CorpseState::wait);
                 ant->setTarget(c->getX(), c->getY());
                 ant->setCorpse(c);
                 return;
+            } else {
+            //     std::cout << "    ant " << ant
+            //               << (ant->get_state() != State::free ? " not free"
+            //                  : ant->getRole()->isCleaner() ? ""
+            //                  : " not cleaner")
+            //               << "\n";
             }
         }
+        // если мы сюда дошли — значит ни один антик не подошёл
+        std::cout << "  no free cleaner for corpse " << c << "\n";
     }
 }
 
+
 void Anthill::clear_collected_corpses() {
-    for (size_t i = 0; i < corpses.size(); ) {
+    for (size_t i = 0; i < corpses.size();) {
         if (corpses[i]->getState() == CorpseState::on_trash) {
             delete corpses[i];
             corpses.erase(corpses.begin() + i);
@@ -228,6 +248,6 @@ void Anthill::addCorpse(Corpse *c) {
     corpses.push_back(c);
     std::cout << "Добавили труп" << std::endl;
     // создаём рендер и добавляем в менеджер
-    auto* r = new CorpseRender(*c);
+    auto *r = new CorpseRender(*c);
     render_manager_.addDrawable(r);
 }

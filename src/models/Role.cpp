@@ -8,3 +8,7 @@ void Role::print() {
 bool Role::isCleaner() {
     return false;
 }
+
+bool Role::isNone() {
+    return false;
+}

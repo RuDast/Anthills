@@ -72,15 +72,6 @@ int main() {
     food_count.setString("Food");
     food_count.setFont(KaaosPro);
     food_count.setCharacterSize(40);
-    Anthill anthill(render_manager, food_count);
-
-    Ant *ant = new Ant(100, 100);
-    AntRender *ant_render = new AntRender(*ant);
-
-
-    ant->add_subscriber(ant_render);
-    render_manager.addDrawable(ant_render);
-
 
 
     NotificationListener *notification_manager = new NotificationManager();

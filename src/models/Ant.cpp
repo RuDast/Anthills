@@ -107,8 +107,8 @@ void Ant::update(const float deltaTime) {
 
     updateAge(deltaTime);
 
-    if (anthill && state == State::free && getRole()->isCleaner())
-        anthill->go_to_corpse();
+    // if (anthill && state == State::free && getRole()->isCleaner())
+    //     anthill->go_to_corpse();
 
     // if (need_to_move && state == State::free && getRole() != None) {
     //     need_to_move = false;
@@ -119,15 +119,28 @@ void Ant::update(const float deltaTime) {
     float delta_y = target_y - y;
     float distance = std::sqrt(delta_x * delta_x + delta_y * delta_y);
 
-    std::cout << "[DBG] Ant " << this
-            << " state=" << int(state)
-            << " pos=(" << x << "," << y << ")"
-            << " target=(" << target_x << "," << target_y << ")"
-            << " dist=" << distance
-            << "\n";
+    // std::cout << "[DBG] Ant " << this
+    //         << " state=" << int(state)
+    //         << " pos=(" << x << "," << y << ")"
+    //         << " target=(" << target_x << "," << target_y << ")"
+    //         << " dist=" << distance
+    //         << "\n";
+
+    if (state == State::free && need_to_move && !getRole()->isNone()) {
+        // новая случайная цель
+        target_x = static_cast<float>(std::rand()) / RAND_MAX * Config::window_width;
+        target_y = static_cast<float>(std::rand()) / RAND_MAX * Config::window_height;
+        need_to_move = false;
+        // std::cout << "[WANDER] Ant " << this
+        //           << " moving to (" << target_x << ", " << target_y << ")\n";
+    }
+
+    if (distance < Config::EPSILON && state == State::free) {
+        need_to_move = true;  // достигли — скоро выберем новую цель
+    }
 
     // … ранее в методе вычислили distance …
-    if (distance < Config::EPSILON) {
+    else if (distance < Config::EPSILON) {
         // Доставка еды на склад
         if (state == State::going && carried_food) {
             carried_food->setState(FoodState::on_sklad);
@@ -135,9 +148,7 @@ void Ant::update(const float deltaTime) {
             carried_food = nullptr;
             state = State::free;
             need_to_move = true; // Важно: освобождаем муравья
-            if (getRole()->isCleaner()) {
-                anthill->go_to_corpse();
-            }
+
         }
         // Доставка трупа на мусорку
         // Подбор еды
@@ -152,6 +163,7 @@ void Ant::update(const float deltaTime) {
                     << " picked up corpse at (" << x << "," << y << ")\n";
             state = State::going;
             carried_corpse->setState(CorpseState::going);
+            carried_corpse->terminate();
             // Назначаем цель – свалка
             setTarget(Config::Anthill::trash_x, Config::Anthill::trash_y);
         }
@@ -163,7 +175,7 @@ void Ant::update(const float deltaTime) {
             carried_corpse = nullptr;
             state = State::free;
             // сразу ищем следующий труп
-            if (anthill) anthill->go_to_corpse();
+            std::cout << "ОТНЕС ТРУП!!!!" << std::endl;
         }
         // Подбор трупа
     }
